@@ -37,6 +37,15 @@ export const siteConfig = {
   heroImageUrl:
     process.env.NEXT_PUBLIC_HERO_IMAGE_URL?.trim() || DEFAULT_HERO_IMAGE_URL,
 
+  /** Etiqueta corta de ubicación en la barra de búsqueda (ej. "¿A dónde?"). */
+  locationLabel:
+    process.env.NEXT_PUBLIC_LOCATION_LABEL?.trim() || "¿A dónde?",
+
+  /** Placeholder del campo de búsqueda principal del hero. */
+  searchPlaceholder:
+    process.env.NEXT_PUBLIC_SEARCH_PLACEHOLDER?.trim() ||
+    "Buscar destinos, hoteles…",
+
   /** Etiqueta de moneda mostrada en precios (el API opera en USD). */
   currencyLabel: "USD",
 } as const;

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Outfit } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/layout/site-shell";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
-const geistSans = Geist({
+const outfitSans = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${geistSans.variable} font-sans`}>
+    <html lang="es" className={`${outfitSans.variable} font-sans`}>
       <body className="min-h-dvh antialiased">
         <Providers>
           <SiteShell>{children}</SiteShell>

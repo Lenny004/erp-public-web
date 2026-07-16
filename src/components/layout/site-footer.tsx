@@ -1,60 +1,108 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 
+/** Enlaces de exploración del marketplace de hospitalidad. */
+const EXPLORE_LINKS = [
+  { href: "/habitaciones", label: "Habitaciones" },
+  { href: "/reservar", label: "Reservar" },
+  { href: "/contacto", label: "Contacto" },
+] as const;
+
+/** Enlaces legales obligatorios. */
+const LEGAL_LINKS = [
+  { href: "/legal/terminos", label: "Términos y condiciones" },
+  { href: "/legal/privacidad", label: "Política de privacidad" },
+] as const;
+
+const linkClassName =
+  "text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground";
+
 /**
- * Pie de página con datos de contacto y enlaces legales obligatorios.
+ * Pie de página con identidad de marca, navegación secundaria,
+ * contacto y aviso legal. Diseño limpio para marketplace premium.
  */
 export function SiteFooter() {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="border-t border-border bg-muted/40">
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
-        <div className="space-y-3">
-          <p className="text-lg font-semibold text-primary">{siteConfig.brandName}</p>
-          <p className="text-sm text-muted-foreground">{siteConfig.tagline}</p>
-        </div>
-
-        <div className="space-y-2 text-sm">
-          <p className="font-medium text-foreground">Contacto</p>
-          <p className="text-muted-foreground">{siteConfig.contactAddress}</p>
-          <p>
-            <a
-              href={`tel:${siteConfig.contactPhone.replace(/\s/g, "")}`}
-              className="text-muted-foreground transition-colors hover:text-primary"
-            >
-              {siteConfig.contactPhone}
-            </a>
-          </p>
-          <p>
-            <a
-              href={`mailto:${siteConfig.contactEmail}`}
-              className="text-muted-foreground transition-colors hover:text-primary"
-            >
-              {siteConfig.contactEmail}
-            </a>
-          </p>
-        </div>
-
-        <div className="space-y-2 text-sm">
-          <p className="font-medium text-foreground">Legal</p>
-          <nav className="flex flex-col gap-1">
+    <footer className="border-t border-border/40 bg-white">
+      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+          {/* Marca y propuesta de valor */}
+          <div className="space-y-4 sm:col-span-2 lg:col-span-1">
             <Link
-              href="/legal/terminos"
-              className="text-muted-foreground transition-colors hover:text-primary"
+              href="/"
+              className="inline-block text-lg font-semibold tracking-tight text-foreground transition-opacity hover:opacity-80"
             >
-              Términos y condiciones
+              {siteConfig.brandName}
             </Link>
-            <Link
-              href="/legal/privacidad"
-              className="text-muted-foreground transition-colors hover:text-primary"
-            >
-              Política de privacidad
-            </Link>
-          </nav>
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {siteConfig.tagline}
+            </p>
+          </div>
+
+          {/* Explorar */}
+          <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
+              Explorar
+            </p>
+            <nav className="flex flex-col gap-3" aria-label="Explorar el sitio">
+              {EXPLORE_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href} className={linkClassName}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Contacto */}
+          <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
+              Contacto
+            </p>
+            <address className="space-y-3 not-italic">
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {siteConfig.contactAddress}
+              </p>
+              <p>
+                <a
+                  href={`tel:${siteConfig.contactPhone.replace(/\s/g, "")}`}
+                  className={linkClassName}
+                >
+                  {siteConfig.contactPhone}
+                </a>
+              </p>
+              <p>
+                <a href={`mailto:${siteConfig.contactEmail}`} className={linkClassName}>
+                  {siteConfig.contactEmail}
+                </a>
+              </p>
+            </address>
+          </div>
+
+          {/* Legal */}
+          <div className="space-y-4">
+            <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
+              Legal
+            </p>
+            <nav className="flex flex-col gap-3" aria-label="Enlaces legales">
+              {LEGAL_LINKS.map(({ href, label }) => (
+                <Link key={href} href={href} className={linkClassName}>
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
 
-      <div className="border-t border-border/60 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} {siteConfig.brandName}. Todos los derechos reservados.
+      {/* Barra inferior con copyright */}
+      <div className="border-t border-border/30 bg-neutral-50/80">
+        <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
+          <p className="text-center text-xs text-muted-foreground">
+            © {year} {siteConfig.brandName}. Todos los derechos reservados.
+          </p>
+        </div>
       </div>
     </footer>
   );

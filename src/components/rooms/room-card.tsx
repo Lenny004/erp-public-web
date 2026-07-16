@@ -3,11 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Users } from "lucide-react";
+
 import type { PublicRoom } from "@/lib/api/public";
-import { formatMoney, resolveMediaUrl } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
+import { getPlaceholderRoomImage } from "@/lib/listing-placeholders";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { RoomImageCarousel } from "@/components/rooms/room-image-carousel";
 
 interface RoomCardProps {
   room: PublicRoom;
@@ -21,8 +22,8 @@ interface RoomCardProps {
 }
 
 /**
- * Tarjeta interactiva de habitación: imagen, datos y CTA de reserva.
- * Usada en listado y en el paso de selección del wizard.
+ * Tarjeta de habitación estilo Airbnb: imagen grande arriba, datos abajo.
+ * Sin fotos del API, usa un placeholder Unsplash estable por id de habitación.
  */
 export function RoomCard({
   room,
@@ -31,72 +32,76 @@ export function RoomCard({
   bookingQuery = "",
   className,
 }: RoomCardProps) {
-  const cover = room.images[0]?.url ? resolveMediaUrl(room.images[0].url) : null;
-  const alt = room.images[0]?.altText ?? room.name;
+  const apiImages = room.images.filter((img) => img.url);
+  const hasApiImages = apiImages.length > 0;
+  const placeholderUrl = getPlaceholderRoomImage(room.id || room.name);
   const reserveHref = `/reservar?roomId=${room.id}${bookingQuery}`;
 
-  return (
-    <article
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md",
-        selected && "ring-2 ring-primary ring-offset-2",
-        className,
-      )}
-    >
-      {/* Imagen de portada */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-        {cover ? (
+  const cardClassName = cn(
+    "group block w-full text-left transition-opacity duration-200 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl",
+    selected && "ring-2 ring-primary ring-offset-2",
+    className,
+  );
+
+  const content = (
+    <>
+      {/* Imagen principal — sin borde ni sombra de tarjeta (patrón listing) */}
+      <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
+        {hasApiImages ? (
+          <RoomImageCarousel images={apiImages} fallbackAlt={room.name} />
+        ) : (
           <Image
-            src={cover}
-            alt={alt}
+            src={placeholderUrl}
+            alt={room.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            Sin imagen
-          </div>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="space-y-1">
-          <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-foreground">{room.name}</h3>
-            <Badge variant="secondary">{room.roomType.name}</Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">Habitación {room.number}</p>
-        </div>
+      {/* Texto debajo de la imagen */}
+      <div className="space-y-1 pt-3">
+        <h3 className="truncate font-medium text-foreground">{room.name}</h3>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <Users className="size-4" aria-hidden />
-            Hasta {room.capacity} huéspedes
-          </span>
-          <span className="font-medium text-foreground">
+        <p className="truncate text-sm text-muted-foreground">
+          {room.roomType.name} · Habitación {room.number}
+        </p>
+
+        <p className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Users className="size-3.5 shrink-0" aria-hidden />
+          Hasta {room.capacity} huéspedes
+        </p>
+
+        <p className="pt-0.5">
+          <span className="font-semibold text-foreground">
             {formatMoney(room.roomType.basePrice)}
-            <span className="font-normal text-muted-foreground"> / noche</span>
           </span>
-        </div>
-
-        <div className="mt-auto flex gap-2 pt-2">
-          {onSelect ? (
-            <Button
-              type="button"
-              className="w-full"
-              variant={selected ? "secondary" : "default"}
-              onClick={() => onSelect(room)}
-            >
-              {selected ? "Seleccionada" : "Elegir habitación"}
-            </Button>
-          ) : (
-            <Button asChild className="w-full">
-              <Link href={reserveHref}>Reservar</Link>
-            </Button>
-          )}
-        </div>
+          <span className="text-sm text-muted-foreground"> noche</span>
+        </p>
       </div>
-    </article>
+    </>
+  );
+
+  if (onSelect) {
+    return (
+      <button
+        type="button"
+        onClick={() => onSelect(room)}
+        aria-pressed={selected}
+        aria-label={
+          selected ? `${room.name}, seleccionada` : `Elegir ${room.name}`
+        }
+        className={cardClassName}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link href={reserveHref} className={cardClassName}>
+      {content}
+    </Link>
   );
 }

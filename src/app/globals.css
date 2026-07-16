@@ -49,78 +49,81 @@
 }
 
 /*
-  Paleta base: background | foreground | primary | secondary | accent
-  (+ muted, destructive, card/popover/sidebar para shadcn)
+  Paleta marketplace hospitality: background | foreground | primary (rose CTA)
+  (+ muted, secondary neutrals, card/popover/sidebar para shadcn)
+  Light-first — no corporate blue-wash.
 */
 :root {
-  --background: oklch(95.59% 0.013 255.51);
-  --foreground: oklch(20.64% 0.030 255.34);
+  --background: oklch(99% 0.002 90);
+  --foreground: oklch(24% 0.012 285);
   --card: oklch(100% 0 0);
   --card-foreground: var(--foreground);
   --popover: oklch(100% 0 0);
   --popover-foreground: var(--foreground);
-  --primary: oklch(35.95% 0.086 256.42);
-  --primary-foreground: oklch(95.59% 0.013 255.51);
-  --secondary: oklch(69.56% 0.108 254.30);
-  --secondary-foreground: oklch(35.95% 0.086 256.42);
-  --accent: oklch(51.40% 0.149 255.82);
-  --accent-foreground: oklch(98% 0.01 255);
-  --muted: oklch(92% 0.015 255);
-  --muted-foreground: oklch(45% 0.04 255);
-  --destructive: oklch(50.6% 0.193 27.7);
-  --destructive-foreground: oklch(98% 0.01 20);
-  --border: oklch(88% 0.02 255);
+  /* Primary CTA: rose/coral hospitality (~#E31C5F) */
+  --primary: oklch(59.5% 0.218 12.5);
+  --primary-foreground: oklch(99% 0 0);
+  --secondary: oklch(96.5% 0.004 90);
+  --secondary-foreground: oklch(32% 0.012 285);
+  --accent: oklch(96% 0.018 12);
+  --accent-foreground: oklch(59.5% 0.218 12.5);
+  --muted: oklch(96% 0.004 90);
+  --muted-foreground: oklch(52% 0.014 285);
+  --destructive: oklch(55% 0.22 27);
+  --destructive-foreground: oklch(99% 0 0);
+  --border: oklch(92% 0.006 90);
   --input: var(--border);
-  --ring: var(--accent);
+  --ring: oklch(59.5% 0.218 12.5 / 45%);
   --chart-1: var(--primary);
-  --chart-2: var(--accent);
-  --chart-3: var(--secondary);
-  --chart-4: oklch(55% 0.1 255);
-  --chart-5: oklch(40% 0.08 255);
-  --radius: 0.625rem;
-  --sidebar: var(--primary);
-  --sidebar-foreground: var(--primary-foreground);
-  --sidebar-hover: oklch(42% 0.09 256);
-  --sidebar-hover-foreground: var(--secondary);
-  --sidebar-active: var(--secondary);
+  --chart-2: oklch(72% 0.12 55);
+  --chart-3: oklch(65% 0.08 200);
+  --chart-4: oklch(78% 0.06 145);
+  --chart-5: oklch(55% 0.04 285);
+  --radius: 0.875rem;
+  --sidebar: oklch(100% 0 0);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-hover: oklch(96.5% 0.004 90);
+  --sidebar-hover-foreground: var(--foreground);
+  --sidebar-active: oklch(96% 0.018 12);
   --sidebar-active-foreground: var(--primary);
-  --sidebar-border: color-mix(in oklch, var(--primary-foreground) 18%, var(--primary));
-  --sidebar-ring: var(--accent);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--primary);
 }
 
+/* Dark variant — optional, warm neutrals (not default) */
 .dark {
-  --background: oklch(15.20% 0.020 253.73);
-  --foreground: oklch(91.52% 0.021 254.92);
-  --card: oklch(20% 0.025 254);
+  --background: oklch(16% 0.008 285);
+  --foreground: oklch(96% 0.004 90);
+  --card: oklch(20% 0.01 285);
   --card-foreground: var(--foreground);
-  --popover: oklch(20% 0.025 254);
+  --popover: oklch(20% 0.01 285);
   --popover-foreground: var(--foreground);
-  --primary: oklch(77.29% 0.072 254.52);
-  --primary-foreground: oklch(15.20% 0.020 253.73);
-  --secondary: oklch(44.48% 0.116 254.91);
-  --secondary-foreground: oklch(91.52% 0.021 254.92);
-  --accent: oklch(62.86% 0.145 254.76);
-  --accent-foreground: oklch(98% 0.01 255);
-  --muted: oklch(28% 0.04 254);
-  --muted-foreground: oklch(70% 0.04 255);
-  --destructive: oklch(70.4% 0.191 22.216);
-  --destructive-foreground: oklch(98% 0.01 20);
-  --border: oklch(100% 0 0 / 12%);
+  --primary: oklch(65% 0.2 12.5);
+  --primary-foreground: oklch(99% 0 0);
+  --secondary: oklch(26% 0.012 285);
+  --secondary-foreground: oklch(92% 0.004 90);
+  --accent: oklch(28% 0.03 12);
+  --accent-foreground: oklch(72% 0.16 12.5);
+  --muted: oklch(26% 0.01 285);
+  --muted-foreground: oklch(68% 0.012 285);
+  --destructive: oklch(65% 0.2 27);
+  --destructive-foreground: oklch(99% 0 0);
+  --border: oklch(100% 0 0 / 10%);
   --input: var(--border);
-  --ring: var(--accent);
+  --ring: oklch(65% 0.2 12.5 / 50%);
   --chart-1: var(--primary);
-  --chart-2: var(--accent);
-  --chart-3: var(--secondary);
-  --chart-4: oklch(60% 0.1 255);
-  --chart-5: oklch(45% 0.08 255);
-  --sidebar: oklch(18% 0.03 254);
+  --chart-2: oklch(72% 0.12 55);
+  --chart-3: oklch(65% 0.08 200);
+  --chart-4: oklch(78% 0.06 145);
+  --chart-5: oklch(55% 0.04 285);
+  --sidebar: oklch(18% 0.01 285);
   --sidebar-foreground: var(--foreground);
-  --sidebar-hover: oklch(28% 0.05 255);
-  --sidebar-hover-foreground: var(--primary);
-  --sidebar-active: var(--secondary);
-  --sidebar-active-foreground: var(--foreground);
+  --sidebar-hover: oklch(26% 0.012 285);
+  --sidebar-hover-foreground: var(--foreground);
+  --sidebar-active: oklch(28% 0.03 12);
+  --sidebar-active-foreground: var(--primary);
   --sidebar-border: oklch(100% 0 0 / 10%);
-  --sidebar-ring: var(--accent);
+  --sidebar-ring: var(--primary);
 }
 
 @layer base {
@@ -217,15 +220,45 @@
 
 @layer utilities {
   /**
-   * Degradado oscuro sobre imágenes hero de marketing.
+   * Degradado cinematográfico suave sobre imágenes hero — bottom fade, no blue wash.
    * Aplicar en un pseudo-elemento o capa absoluta sobre la foto de fondo.
    */
   .hero-scrim {
     background: linear-gradient(
       to bottom,
-      oklch(15% 0.03 255 / 0.15) 0%,
-      oklch(15% 0.03 255 / 0.55) 55%,
-      oklch(15% 0.03 255 / 0.82) 100%
+      oklch(0% 0 0 / 0) 0%,
+      oklch(0% 0 0 / 0.06) 35%,
+      oklch(0% 0 0 / 0.38) 72%,
+      oklch(0% 0 0 / 0.62) 100%
     );
+  }
+
+  /** Sombra sutil para cards de listado (marketplace listing cards). */
+  .listing-shadow {
+    box-shadow:
+      0 1px 2px oklch(0% 0 0 / 0.04),
+      0 4px 16px oklch(0% 0 0 / 0.08);
+  }
+
+  .listing-shadow:hover {
+    box-shadow:
+      0 2px 4px oklch(0% 0 0 / 0.06),
+      0 8px 24px oklch(0% 0 0 / 0.12);
+  }
+
+  /** Shell de búsqueda tipo pill — barra flotante estilo marketplace. */
+  .pill-search-shell {
+    @apply flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5;
+    box-shadow:
+      0 1px 2px oklch(0% 0 0 / 0.04),
+      0 6px 20px oklch(0% 0 0 / 0.08);
+    transition: box-shadow 200ms ease;
+  }
+
+  .pill-search-shell:focus-within {
+    @apply border-foreground/15 ring-2 ring-ring;
+    box-shadow:
+      0 2px 4px oklch(0% 0 0 / 0.06),
+      0 8px 28px oklch(0% 0 0 / 0.12);
   }
 }
