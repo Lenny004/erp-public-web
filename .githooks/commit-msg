@@ -1,0 +1,12 @@
+#!/bin/sh
+# Rechaza trailers Co-authored-by (incluye inserciones automáticas de Cursor).
+
+if grep -qiE '^Co-authored-by:' "$1"; then
+  echo ""
+  echo "ERROR: Co-authored-by no está permitido en este repositorio."
+  echo "Elimina el trailer del mensaje de commit y vuelve a intentar."
+  echo ""
+  exit 1
+fi
+
+exit 0
