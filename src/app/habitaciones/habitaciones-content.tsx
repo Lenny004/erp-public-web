@@ -2,6 +2,7 @@
 
 import { AlertCircle, BedDouble, RefreshCw } from "lucide-react";
 import { usePublicRooms } from "@/hooks/use-public-rooms";
+import { AnimatedStaggerGrid } from "@/components/motion/animated-stagger-grid";
 import { RoomCard } from "@/components/rooms/room-card";
 import { ListingSkeleton } from "@/components/rooms/listing-skeleton";
 import { Button } from "@/components/ui/button";
@@ -82,10 +83,10 @@ export function HabitacionesContent() {
   }
 
   return (
-    <ListingGrid>
+    <AnimatedStaggerGrid className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
       {rooms.map((room) => (
-        <RoomCard key={room.id} room={room} className="animate-in fade-in duration-500" />
+        <RoomCard key={room.id} room={room} />
       ))}
-    </ListingGrid>
+    </AnimatedStaggerGrid>
   );
 }

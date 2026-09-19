@@ -1,0 +1,20 @@
+---
+description: Contexto general de erp-public-web — reservas hoteleras públicas
+alwaysApply: true
+---
+
+# erp-public-web
+
+Sitio público de reservas. Single-tenant / white-label por env. Puerto local **3002**.
+
+Consume solo `/api/public/*` de `erp-core-api`. Sin JWT de admin ni login de huésped.
+
+## Stack
+
+Next.js 15 App Router, React 19, TypeScript, Tailwind v4 (tokens alineados al admin), TanStack Query, Zod, Sonner.
+
+## Límites
+
+Crea reservas `PENDIENTE`. No cobra, no emite DTE, no confirma check-in.
+
+Código en inglés. UI en español. Responder al desarrollador en español.

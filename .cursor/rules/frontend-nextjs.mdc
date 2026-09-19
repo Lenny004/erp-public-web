@@ -1,0 +1,14 @@
+---
+description: Convenciones Next.js y UI del sitio público
+globs: src/**/*.ts,src/**/*.tsx
+alwaysApply: false
+---
+
+# Frontend público
+
+- App Router. Server Components por defecto; cliente en wizard, listados y formularios.
+- Tailwind v4 + tokens OKLCH alineados a `erp-admin-web`. Clases con `cn()`.
+- Branding solo desde `src/lib/site-config.ts` / env. No hardcodear el hotel.
+- shadcn/ui existente antes de inventar componentes.
+- Alias `@/*` → `./src/*`. UI en español.
+- Animaciones: respetar `prefers-reduced-motion`.

@@ -1,0 +1,17 @@
+---
+description: Flujo de trabajo Git para erp-public-web
+alwaysApply: true
+---
+
+# Git Workflow
+
+- `main`: producción, solo vía PR.
+- Integración: `feature-public` (no commitear directo a `main`).
+- Features: `feat/<nombre>`, `fix/<nombre>`, `chore/<nombre>`.
+- Commits en español con prefijo convencional.
+- **Prohibido** `Co-authored-by:` (ver `no-coauthor.mdc`).
+- Nunca commitear `.env`, `.env.local` ni secretos. Solo `.env.example`.
+
+```bash
+git config core.hooksPath .githooks
+```

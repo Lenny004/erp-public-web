@@ -1,0 +1,15 @@
+---
+description: Flujo de reservas públicas y límites del API /api/public
+globs: src/lib/api/**/*.ts,src/hooks/**/*.ts,src/lib/validations/**/*.ts
+alwaysApply: false
+---
+
+# Reservas públicas
+
+- Cliente: `src/lib/api/public.ts`. Base `{API}/api/public`.
+- Endpoints: `GET /rooms`, `POST /reservations/availability`, `POST /reservations`, `POST /contact`.
+- No usar `/api/reservations` ni `/api/rooms` autenticados del admin.
+- La reserva nace `PENDIENTE` / `EN_LINEA`. Confirmación y pagos = admin + API.
+- Rate limit vive en el API; no spamear availability en cada tecla: debounce / submit.
+
+Validar fechas (checkout > checkin) y datos de huésped con Zod antes de enviar.

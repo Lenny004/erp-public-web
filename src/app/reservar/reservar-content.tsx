@@ -14,6 +14,7 @@ import { useCreateReservation } from "@/hooks/use-create-reservation";
 import { BookingSearchForm } from "@/components/booking/booking-search-form";
 import { AvailabilityPanel } from "@/components/booking/availability-panel";
 import { ReservationForm } from "@/components/booking/reservation-form";
+import { AnimatedReveal } from "@/components/motion/animated-reveal";
 
 /** Pasos del wizard de reserva — numerados para claridad en UI y comentarios. */
 type WizardStep = 1 | 2 | 3;
@@ -231,7 +232,8 @@ export function ReservarContent() {
 
       {/* PASO 2 — selección de habitación (visible tras búsqueda exitosa) */}
       {step >= 2 && searchValues && (
-        <section aria-labelledby="step-room-heading" className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <AnimatedReveal>
+        <section aria-labelledby="step-room-heading">
           <header className="mb-8 space-y-3">
             <div className="space-y-1">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -275,14 +277,13 @@ export function ReservarContent() {
             }
           />
         </section>
+        </AnimatedReveal>
       )}
 
       {/* PASO 3 — datos del huésped */}
       {step === 3 && selectedRoom && searchValues && (
-        <section
-          aria-labelledby="step-guest-heading"
-          className="mx-auto max-w-2xl animate-in fade-in slide-in-from-bottom-2 duration-500"
-        >
+        <AnimatedReveal className="mx-auto max-w-2xl">
+        <section aria-labelledby="step-guest-heading">
           <header className="mb-8 space-y-3">
             <div className="space-y-1">
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -313,6 +314,7 @@ export function ReservarContent() {
             onSubmit={handleCreateReservation}
           />
         </section>
+        </AnimatedReveal>
       )}
     </div>
   );

@@ -13,6 +13,7 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
+    "@react-spring/web": "^10.1.2",
     "@tanstack/react-query": "^5.97.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -1,0 +1,21 @@
+---
+description: Estándares TypeScript para erp-public-web
+globs: "**/*.ts,**/*.tsx"
+alwaysApply: false
+---
+
+# TypeScript
+
+- `strict: true`. `moduleResolution: bundler` — imports sin extensión.
+- `interface` para objetos; `type` para uniones.
+- Nunca `any`. Tipos de dominio en `src/lib/api/public.ts`.
+- Formularios: Zod en `src/lib/validations/` antes del fetch.
+
+```typescript
+// ❌
+const body: any = form;
+
+// ✅
+const parsed = createReservationSchema.safeParse(form);
+if (!parsed.success) return;
+```

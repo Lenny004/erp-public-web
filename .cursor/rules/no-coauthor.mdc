@@ -1,0 +1,18 @@
+---
+description: Prohibición absoluta de trailers Co-authored-by en commits
+alwaysApply: true
+---
+
+# Sin co-autoría de Cursor
+
+- **Nunca** agregar `Co-authored-by:` en commits, PR ni merge.
+- **Nunca** incluir `cursoragent@cursor.com` ni variantes de co-autoría.
+- Los commits se atribuyen solo al autor humano.
+
+Si una herramienta inserta co-autoría, eliminarla antes de commitear.
+
+```bash
+git config core.hooksPath .githooks
+```
+
+`prepare-commit-msg` filtra el trailer; `commit-msg` lo rechaza si reaparece.

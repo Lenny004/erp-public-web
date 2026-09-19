@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { usePublicRooms } from "@/hooks/use-public-rooms";
+import { AnimatedStaggerGrid } from "@/components/motion/animated-stagger-grid";
 import { RoomCard } from "@/components/rooms/room-card";
 import { ListingSkeleton } from "@/components/rooms/listing-skeleton";
 import { Button } from "@/components/ui/button";
@@ -75,17 +76,11 @@ export function FeaturedRooms() {
       )}
 
       {!isLoading && !isError && !!rooms?.length && (
-        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {rooms.slice(0, FEATURED_LIMIT).map((room, index) => (
-            <div
-              key={room.id}
-              className="animate-in fade-in duration-500"
-              style={{ animationDelay: `${index * 80}ms` }}
-            >
-              <RoomCard room={room} />
-            </div>
+        <AnimatedStaggerGrid className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+          {rooms.slice(0, FEATURED_LIMIT).map((room) => (
+            <RoomCard key={room.id} room={room} />
           ))}
-        </div>
+        </AnimatedStaggerGrid>
       )}
     </div>
   );
