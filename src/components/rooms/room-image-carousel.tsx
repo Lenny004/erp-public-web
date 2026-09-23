@@ -71,7 +71,7 @@ export function RoomImageCarousel({
             type="button"
             aria-label="Imagen anterior"
             onClick={handlePrev}
-            className="absolute left-3 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground opacity-0 shadow-sm transition-opacity hover:bg-white group-hover/carousel:opacity-100"
+            className="absolute left-3 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-card/90 text-foreground opacity-0 shadow-sm transition-opacity hover:bg-card group-hover/carousel:opacity-100"
           >
             <ChevronLeft className="size-4" aria-hidden />
           </button>
@@ -79,7 +79,7 @@ export function RoomImageCarousel({
             type="button"
             aria-label="Imagen siguiente"
             onClick={handleNext}
-            className="absolute right-3 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-foreground opacity-0 shadow-sm transition-opacity hover:bg-white group-hover/carousel:opacity-100"
+            className="absolute right-3 top-1/2 z-10 flex size-8 -translate-y-1/2 items-center justify-center rounded-full bg-card/90 text-foreground opacity-0 shadow-sm transition-opacity hover:bg-card group-hover/carousel:opacity-100"
           >
             <ChevronRight className="size-4" aria-hidden />
           </button>
@@ -101,8 +101,8 @@ export function RoomImageCarousel({
                 className={cn(
                   "size-1.5 rounded-full transition-all",
                   dotIndex === index
-                    ? "scale-125 bg-white"
-                    : "bg-white/60 hover:bg-white/80",
+                    ? "scale-125 bg-card"
+                    : "bg-card/60 hover:bg-card/80",
                 )}
               />
             ))}

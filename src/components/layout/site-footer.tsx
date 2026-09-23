@@ -25,7 +25,7 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/40 bg-white">
+    <footer className="border-t border-border/40 bg-card">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
           {/* Marca y propuesta de valor */}
@@ -97,7 +97,7 @@ export function SiteFooter() {
       </div>
 
       {/* Barra inferior con copyright */}
-      <div className="border-t border-border/30 bg-neutral-50/80">
+      <div className="border-t border-border/30 bg-muted/80">
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
           <p className="text-center text-xs text-muted-foreground">
             © {year} {siteConfig.brandName}. Todos los derechos reservados.

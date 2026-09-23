@@ -129,6 +129,7 @@ export function ReservarContent() {
         guestName: formValues.guestName,
         email: formValues.email,
         phone: formValues.phone,
+        guestCount: searchValues.guests,
         notes: formValues.notes,
       });
 

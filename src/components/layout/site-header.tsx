@@ -81,7 +81,7 @@ export function SiteHeader() {
           HEADER_HEIGHT_CLASS,
           isTransparent
             ? "border-b border-transparent bg-transparent"
-            : "border-b border-border/50 bg-white/85 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-white/75",
+            : "border-b border-border/50 bg-card/85 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-card/75",
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
@@ -91,7 +91,7 @@ export function SiteHeader() {
             className={cn(
               "shrink-0 text-xl font-semibold tracking-tight transition-colors sm:text-[1.35rem]",
               isTransparent
-                ? "text-white hover:text-white/90"
+                ? "text-primary-foreground hover:text-primary-foreground/90"
                 : "text-foreground hover:text-foreground/80",
             )}
           >
@@ -115,8 +115,8 @@ export function SiteHeader() {
                     "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                     isTransparent
                       ? isActive
-                        ? "bg-white/15 text-white"
-                        : "text-white/90 hover:bg-white/10 hover:text-white"
+                        ? "bg-primary-foreground/15 text-primary-foreground"
+                        : "text-primary-foreground/90 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                       : isActive
                         ? "bg-foreground/5 text-foreground"
                         : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
@@ -148,8 +148,8 @@ export function SiteHeader() {
               className={cn(
                 "rounded-full border px-3 md:hidden",
                 isTransparent
-                  ? "border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                  : "border-border/80 bg-white text-foreground shadow-sm hover:bg-muted/40",
+                  ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+                  : "border-border/80 bg-card text-foreground shadow-sm hover:bg-muted/40",
               )}
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav-drawer"
@@ -198,7 +198,7 @@ export function SiteHeader() {
         {/* Panel slides in from the right */}
         <div
           className={cn(
-            "absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 ease-out",
+            "absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-card shadow-2xl transition-transform duration-300 ease-out",
             mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
           role="dialog"

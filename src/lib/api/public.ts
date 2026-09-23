@@ -52,6 +52,7 @@ export interface CreateReservationRequest {
   guestName: string;
   email: string;
   phone: string;
+  guestCount: number;
   notes?: string;
 }
 
@@ -64,6 +65,7 @@ export interface CreateReservationResponse {
   checkout: string;
   guestName: string;
   guestPhone: string;
+  guestCount?: number;
   notes: string | null;
   total: string | number;
   roomId?: string;

@@ -16,7 +16,7 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:opacity-80",
         destructive: "bg-destructive text-destructive-foreground hover:opacity-80",
         primary: "bg-primary text-primary-foreground hover:opacity-80",
-        white: "bg-white text-primary hover:opacity-80",
+        white: "bg-primary-foreground text-primary hover:opacity-80",
         ghost: "text-foreground hover:bg-muted/60",
       },
       // Forma del botón — `pill` para CTAs tipo marketplace (Airbnb).

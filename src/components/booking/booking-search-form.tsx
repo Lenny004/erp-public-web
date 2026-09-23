@@ -122,7 +122,7 @@ export function BookingSearchForm({
       */}
       <div
         className={cn(
-          "overflow-hidden border border-border/50 bg-white shadow-[0_6px_20px_rgba(0,0,0,0.08)]",
+          "overflow-hidden border border-border/50 bg-card shadow-lg",
           "rounded-2xl lg:rounded-full",
           "flex flex-col lg:flex-row lg:items-stretch",
           hasErrors && "ring-2 ring-destructive/20",
