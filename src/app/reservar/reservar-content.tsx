@@ -1,5 +1,7 @@
 "use client";
 
+/** Flujo público de reserva: valida datos y envía la solicitud sin autenticación. */
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check } from "lucide-react";

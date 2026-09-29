@@ -1,5 +1,7 @@
 "use client";
 
+/** Formulario público de contacto; no expone datos internos ni requiere sesión. */
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader2, Send } from "lucide-react";

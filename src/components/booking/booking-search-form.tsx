@@ -1,5 +1,7 @@
 "use client";
 
+/** Consulta disponibilidad pública y entrega la selección al formulario de reserva. */
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search } from "lucide-react";

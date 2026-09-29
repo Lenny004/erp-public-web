@@ -1,5 +1,7 @@
 "use client";
 
+/** Cabecera white-label que muestra el nombre comercial de la empresa configurada. */
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -7,6 +9,7 @@ import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { publicApi } from "@/lib/api/public";
 
 /** Pixel threshold before the home header transitions from transparent to solid. */
 const SCROLL_SOLID_THRESHOLD = 24;
@@ -36,6 +39,13 @@ export function SiteHeader() {
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [brandName, setBrandName] = useState(siteConfig.brandName);
+
+  useEffect(() => {
+    publicApi.getCompanyProfile().then((company) => {
+      if (company?.commercialName || company?.legalName) setBrandName(company.commercialName || company.legalName);
+    }).catch(() => undefined);
+  }, []);
 
   /** True when the header floats over the hero with no solid background. */
   const isTransparent = isHome && !scrolled;
@@ -95,7 +105,7 @@ export function SiteHeader() {
                 : "text-foreground hover:text-foreground/80",
             )}
           >
-            {siteConfig.brandName}
+            {brandName}
           </Link>
 
           {/* Desktop nav — absolutely centered for a balanced marketplace layout */}
@@ -208,7 +218,7 @@ export function SiteHeader() {
           {/* Drawer header */}
           <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
             <span className="text-lg font-semibold tracking-tight text-foreground">
-              {siteConfig.brandName}
+              {brandName}
             </span>
             <Button
               type="button"

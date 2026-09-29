@@ -1,5 +1,11 @@
+"use client";
+
+/** Pie público con contacto y dirección obtenidos de la ficha global de empresa. */
+
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
+import { publicApi } from "@/lib/api/public";
+import { useEffect, useState } from "react";
 
 /** Enlaces de exploración del marketplace de hospitalidad. */
 const EXPLORE_LINKS = [
@@ -23,6 +29,11 @@ const linkClassName =
  */
 export function SiteFooter() {
   const year = new Date().getFullYear();
+  const [company, setCompany] = useState<{ name: string; address: string; phone: string; email: string }>({ name: siteConfig.brandName, address: siteConfig.contactAddress, phone: siteConfig.contactPhone, email: siteConfig.contactEmail });
+
+  useEffect(() => {
+    publicApi.getCompanyProfile().then((data) => { if (data) setCompany({ name: data.commercialName || data.legalName, address: data.address || siteConfig.contactAddress, phone: data.phone || siteConfig.contactPhone, email: data.email || siteConfig.contactEmail }); }).catch(() => undefined);
+  }, []);
 
   return (
     <footer className="border-t border-border/40 bg-card">
@@ -34,7 +45,7 @@ export function SiteFooter() {
               href="/"
               className="inline-block text-lg font-semibold tracking-tight text-foreground transition-opacity hover:opacity-80"
             >
-              {siteConfig.brandName}
+              {company.name}
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
               {siteConfig.tagline}
@@ -62,19 +73,19 @@ export function SiteFooter() {
             </p>
             <address className="space-y-3 not-italic">
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {siteConfig.contactAddress}
+                {company.address}
               </p>
               <p>
                 <a
-                  href={`tel:${siteConfig.contactPhone.replace(/\s/g, "")}`}
+                  href={`tel:${company.phone.replace(/\s/g, "")}`}
                   className={linkClassName}
                 >
-                  {siteConfig.contactPhone}
+                  {company.phone}
                 </a>
               </p>
               <p>
-                <a href={`mailto:${siteConfig.contactEmail}`} className={linkClassName}>
-                  {siteConfig.contactEmail}
+                <a href={`mailto:${company.email}`} className={linkClassName}>
+                  {company.email}
                 </a>
               </p>
             </address>
@@ -100,7 +111,7 @@ export function SiteFooter() {
       <div className="border-t border-border/30 bg-muted/80">
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
           <p className="text-center text-xs text-muted-foreground">
-            © {year} {siteConfig.brandName}. Todos los derechos reservados.
+            © {year} {company.name}. Todos los derechos reservados.
           </p>
         </div>
       </div>

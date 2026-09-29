@@ -1,3 +1,4 @@
+/** Cliente HTTP del contrato `/api/public/*`, incluido el perfil white-label. */
 import { publicApiClient } from "@/lib/api";
 
 // ---------------------------------------------------------------------------
@@ -56,6 +57,17 @@ export interface CreateReservationRequest {
   notes?: string;
 }
 
+/** Identidad pública de la empresa configurada en la instalación. */
+export interface PublicCompanyProfile {
+  legalName: string;
+  commercialName: string | null;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  website: string | null;
+  logoUrl: string | null;
+}
+
 /** Reserva creada (estado inicial `PENDIENTE`, origen `EN_LINEA`). */
 export interface CreateReservationResponse {
   id: string;
@@ -103,6 +115,9 @@ const PUBLIC_API_BASE = "/api/public";
  * Todas las rutas están bajo `/api/public` y no requieren autenticación.
  */
 export const publicApi = {
+  /** Obtiene la identidad pública para marca y contacto del sitio. */
+  getCompanyProfile: (): Promise<PublicCompanyProfile | null> =>
+    publicApiClient.get<PublicCompanyProfile | null>(`${PUBLIC_API_BASE}/company`),
   /** Lista habitaciones con estado `DISPONIBLE` y sus imágenes. */
   getRooms: (): Promise<PublicRoom[]> =>
     publicApiClient.get<PublicRoom[]>(`${PUBLIC_API_BASE}/rooms`),

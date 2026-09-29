@@ -12,8 +12,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 interface ReservationFormProps {
+  /** Valores iniciales que pueden conservarse al volver a este paso. */
   defaultValues?: Partial<GuestDetailsValues>;
+  /** Bloquea el formulario mientras se crea la reserva. */
   isSubmitting?: boolean;
+  /** Recibe los datos validados para iniciar la creación de la reserva. */
   onSubmit: (values: GuestDetailsValues) => void | Promise<void>;
 }
 
