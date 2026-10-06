@@ -1,14 +1,48 @@
+<!-- readme-standard:v1 -->
+<!-- Esta línea permite que los agentes de IA reconozcan y actualicen este README. No la borres. -->
+
+<!-- section:header -->
 # erp-public-web
 
-Sitio público de reservas hoteleras del ecosistema ERP. Permite consultar habitaciones, verificar disponibilidad, crear una reserva en línea (estado `PENDIENTE`, origen `EN_LINEA`) y enviar un mensaje de contacto. Consume **solo** `/api/public/*` en **erp-core-api**.
+> Sitio público de reservas hoteleras para huéspedes; consume solo `/api/public/*` de erp-core-api.
 
-**Plantilla single-tenant por despliegue**: branding y copy se configuran por variables de entorno. No hay login de huésped ni JWT de admin.
+<!-- section:toc -->
+## 📑 Contenido
 
-## Rol en el ecosistema
+- [Aspectos destacados](#-aspectos-destacados)
+- [Descripción](#️-descripción)
+- [Requisitos](#-requisitos)
+- [Instalación](#️-instalación)
+- [Uso](#-uso)
+- [Configuración](#️-configuración)
+- [Estructura del proyecto](#️-estructura-del-proyecto)
+- [Desarrollo](#️-desarrollo)
+- [Pruebas](#-pruebas)
+- [Hoja de ruta y estado](#️-hoja-de-ruta-y-estado)
+- [Soporte y contribuciones](#-soporte-y-contribuciones)
+- [Licencia](#-licencia)
 
-```txt
+<!-- section:highlights -->
+## 🌟 Aspectos destacados
+
+- **Reservas en línea**: catálogo, disponibilidad y creación de reservas con estado `PENDIENTE` y origen `EN_LINEA`.
+- **Sin login de huésped**: el API público aplica rate limit; no hay JWT de admin en este cliente.
+- **White-label por despliegue**: marca, textos e imágenes vía `NEXT_PUBLIC_*` (single-tenant).
+- **Formularios validados**: Zod antes de llamar al API (reserva y contacto).
+- **Alineado al admin**: tokens OKLCH y Tailwind v4 coherentes con `erp-admin-web`.
+
+<!-- section:overview -->
+## ℹ️ Descripción
+
+Frontend orientado al huésped: inicio, habitaciones, wizard de reserva, confirmación y contacto. La confirmación operativa (check-in, pagos, cambios de estado) ocurre en `erp-admin-web`. No confirma reservas ni cobra en este sitio.
+
+Cada despliegue es una instancia para un hotel: no hay panel SaaS multiempresa ni cuenta de huésped.
+
+**Ecosistema** (repos separados en `ERP-System/` por comodidad local):
+
+```text
 erp-admin-web (3000)     JWT de usuario + RBAC
-erp-clock-web (3001)     PIN → JWT efímero (scope attendance)
+erp-clock-web (3001)     PIN → JWT efímero (asistencia)
 erp-public-web (3002)    API pública de reservas (sin login)
         ↓
    erp-core-api (4000)
@@ -18,71 +52,33 @@ erp-public-web (3002)    API pública de reservas (sin login)
 
 | Repositorio | Rol |
 |-------------|-----|
-| **erp-core-api** | Backend. Expone `/api/public/*` y rate-limita el sitio. |
-| **erp-admin-web** | Gestiona habitaciones, calendario y reservas (confirma o rechaza las `PENDIENTE`). |
+| **erp-core-api** | Expone `/api/public/*` y rate-limita el sitio. |
+| **erp-admin-web** | Habitaciones, calendario y reservas (confirma o rechaza `PENDIENTE`). |
 | **erp-clock-web** | Marcación de asistencia (sin relación con reservas públicas). |
-| **erp-public-web** (este) | Frontend orientado al huésped: catálogo, wizard de reserva y contacto. |
+| **erp-public-web** (este) | Catálogo, wizard de reserva y contacto. |
 
-No es un monorepo. Los cuatro repos conviven en la carpeta de trabajo `ERP-System/` solo por comodidad local.
+**Stack:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, Zod, Sonner, Lucide React, pnpm 11.
 
-## Stack
+<!-- section:requirements -->
+## 📋 Requisitos
 
-| Área | Tecnología |
-|------|------------|
-| Framework | Next.js 15 (App Router) + React 19 |
-| Lenguaje | TypeScript estricto (`moduleResolution: bundler`) |
-| UI | Tailwind CSS v4 (tokens OKLCH alineados a `erp-admin-web`), shadcn/ui |
-| Datos remotos | TanStack Query contra `/api/public` |
-| Validación | Zod (formularios de reserva y contacto) |
-| Notificaciones | Sonner |
-| Iconografía | Lucide React |
-| Gestor de paquetes | pnpm 11 |
-
-## Requisitos
-
-- Node.js 20+ (recomendado 22)
+- Node.js ≥ 20 (recomendado 22)
 - pnpm 11
-- `erp-core-api` en [http://localhost:4000](http://localhost:4000) con habitaciones y tipos de habitación cargados
-- `CORS_ORIGIN` del API debe incluir `http://localhost:3002` en desarrollo (el API admite 3000/3001 por defecto; el sitio público hay que añadirlo)
+- `erp-core-api` en `http://localhost:4000` con habitaciones y tipos cargados
+- `CORS_ORIGIN` del API debe incluir `http://localhost:3002` en desarrollo
 
-## Arquitectura
-
-- Sin autenticación de usuario. El API público aplica rate limit.
-- Cliente en `src/lib/api/public.ts` (mismo estilo de métodos nombrados que el admin).
-- Formularios validados con Zod antes de llamar al API.
-- Server Components por defecto; `"use client"` en wizard, listados interactivos y formularios.
-- Path alias `@/*` → `./src/*`.
-- UI en español. Código en inglés.
-- White-label básico vía `NEXT_PUBLIC_BRAND_*` y `NEXT_PUBLIC_ORG_SLUG`.
-
-## Estructura del código
-
-```txt
-src/
-  app/
-    page.tsx                 # Inicio + hero
-    habitaciones/            # Catálogo
-    reservar/                # Wizard + confirmación
-    contacto/
-    legal/                   # Términos y privacidad
-  components/
-    layout/                  # Header, footer, shell
-    rooms/ booking/ contact/
-    ui/                      # shadcn
-    motion/                  # Revelados y springs
-  hooks/                     # usePublicRooms, useAvailability, useCreateReservation, useContact
-  lib/
-    api.ts / api/public.ts   # Cliente público
-    validations/             # Zod de reserva, booking y contacto
-    site-config.ts           # Branding desde env
-    api-base-url.ts
-```
-
-## Desarrollo local
+<!-- section:installation -->
+## ⬇️ Instalación
 
 ```bash
 pnpm install
 cp .env.example .env.local
+```
+
+<!-- section:usage -->
+## 🚀 Uso
+
+```bash
 pnpm dev
 ```
 
@@ -91,9 +87,9 @@ Servidor local: [http://localhost:3002](http://localhost:3002)
 1. Levanta `erp-core-api` con datos de habitaciones.
 2. Añade `http://localhost:3002` a `CORS_ORIGIN` del API.
 3. Ajusta `.env.local` (marca, contacto, `NEXT_PUBLIC_API_URL`).
-4. Abre el sitio y recorre: inicio → habitaciones → disponibilidad → reserva → confirmación.
+4. Recorre: inicio → habitaciones → disponibilidad → reserva → confirmación.
 
-## Rutas de la UI
+**Rutas de la UI**
 
 | Ruta | Descripción |
 |------|-------------|
@@ -104,85 +100,89 @@ Servidor local: [http://localhost:3002](http://localhost:3002)
 | `/contacto` | Formulario de contacto |
 | `/legal/terminos` y `/legal/privacidad` | Textos legales |
 
-## Endpoints consumidos
-
-Base: `{NEXT_PUBLIC_API_URL}/api/public`
+**Endpoints consumidos** (base `{NEXT_PUBLIC_API_URL}/api/public`)
 
 | Método | Ruta | Uso |
 |--------|------|-----|
-| `GET` | `/rooms` | Catálogo de habitaciones |
+| `GET` | `/rooms` | Catálogo |
 | `POST` | `/reservations/availability` | Disponibilidad por fechas |
 | `POST` | `/reservations` | Crear reserva (`PENDIENTE`) |
-| `POST` | `/contact` | Formulario de contacto |
+| `POST` | `/contact` | Contacto |
 
-La confirmación operativa (check-in, pagos, cambios de estado) ocurre en `erp-admin-web`.
+**Despliegue (plantilla por cliente)**
 
-## Scripts
-
-| Comando | Descripción |
-|---------|-------------|
-| `pnpm dev` | Desarrollo en el puerto 3002 |
-| `pnpm build` | Compilar producción |
-| `pnpm start` | Servir build en el puerto 3002 |
-| `pnpm type-check` | Verificar TypeScript |
-| `pnpm lint` | ESLint (Next) |
-| `pnpm clean` | Eliminar `.next` |
-
-## Variables de entorno
-
-Copia `.env.example` a `.env.local`. Nunca commitear secretos.
-
-| Variable | Descripción |
-|----------|-------------|
-| `NEXT_PUBLIC_API_URL` | URL de `erp-core-api` (sin barra final) |
-| `NEXT_PUBLIC_BRAND_NAME` | Nombre del hotel en UI y metadata |
-| `NEXT_PUBLIC_BRAND_TAGLINE` | Frase de apoyo en hero y footer |
-| `NEXT_PUBLIC_HERO_IMAGE_URL` | Imagen full-bleed del inicio |
-| `NEXT_PUBLIC_ORG_SLUG` | Slug de organización (white-label) |
-| `NEXT_PUBLIC_LOCATION_LABEL` | Ubicación mostrada en UI |
-| `NEXT_PUBLIC_SEARCH_PLACEHOLDER` | Placeholder del buscador de fechas |
-| `NEXT_PUBLIC_CONTACT_ADDRESS` | Dirección de contacto |
-| `NEXT_PUBLIC_CONTACT_PHONE` | Teléfono |
-| `NEXT_PUBLIC_CONTACT_EMAIL` | Correo de reservas / contacto |
-
-## Convenciones de desarrollo
-
-- No confirmar reservas ni cobrar en este sitio: el API crea `PENDIENTE`.
-- No usar el cliente JWT de admin ni rutas `/api/reservations` internas.
-- Tokens visuales alineados al admin (OKLCH / Tailwind v4). Combinar clases con `cn()`.
-- Validar con Zod. Nunca `any`.
-- Respetar `prefers-reduced-motion` en animaciones.
-- Responder siempre en español al desarrollador.
-
-Reglas persistentes: `.cursor/rules/`. Skill de mejora de código: `.cursor/skills/improve-public-web-code/`.
-
-## Git
-
-- Rama principal: `main` (solo vía PR).
-- Integración: `feature-public`.
-- Features: `feat/<nombre>`, `fix/<nombre>`, `chore/<nombre>`.
-- Commits en español con prefijo convencional.
-- **Prohibido** `Co-authored-by:` en commits.
-
-Activar los hooks locales:
-
-```bash
-git config core.hooksPath .githooks
-```
-
-`prepare-commit-msg` elimina trailers de co-autoría; `commit-msg` los rechaza si reaparecen.
-
-## Despliegue (plantilla por cliente)
-
-```txt
+```text
 api.<dominio>           → erp-core-api
 admin.<dominio>         → erp-admin-web
 reservas.<dominio>      → erp-public-web
 ```
 
-Incluye el origen HTTPS de este sitio en `CORS_ORIGIN` del API. Branding por env, sin hardcodear el nombre del hotel en componentes.
+Incluye el origen HTTPS del sitio en `CORS_ORIGIN` del API.
 
-## Fuera de alcance
+<!-- section:configuration -->
+## ⚙️ Configuración
+
+Copia `.env.example` a `.env.local`. Nunca commitear secretos.
+
+| Variable | Descripción | Ejemplo | Requerida |
+|---|---|---|---|
+| `NEXT_PUBLIC_API_URL` | URL de erp-core-api (sin barra final) | `http://localhost:4000` | Sí |
+| `NEXT_PUBLIC_BRAND_NAME` | Nombre del hotel en UI y metadata | `Hotel Vista Azul` | Sí |
+| `NEXT_PUBLIC_BRAND_TAGLINE` | Frase en hero y footer | `Descanso frente al mar…` | No |
+| `NEXT_PUBLIC_HERO_IMAGE_URL` | Imagen del inicio | URL HTTPS pública | No |
+| `NEXT_PUBLIC_ORG_SLUG` | Slug de organización | `default` | Sí |
+| `NEXT_PUBLIC_LOCATION_LABEL` | Ubicación en UI | `El Salvador` | No |
+| `NEXT_PUBLIC_SEARCH_PLACEHOLDER` | Placeholder del buscador | `¿Cuándo te hospedas?` | No |
+| `NEXT_PUBLIC_CONTACT_ADDRESS` | Dirección de contacto | Texto libre | No |
+| `NEXT_PUBLIC_CONTACT_PHONE` | Teléfono | `+503 …` | No |
+| `NEXT_PUBLIC_CONTACT_EMAIL` | Correo reservas/contacto | `reservas@ejemplo.sv` | No |
+
+<!-- section:structure -->
+## 🗂️ Estructura del proyecto
+
+```text
+src/
+  app/                 # Páginas (inicio, habitaciones, reservar, contacto, legal)
+  components/          # layout, rooms, booking, contact, ui, motion
+  hooks/               # usePublicRooms, useAvailability, useCreateReservation, …
+  lib/
+    api/public.ts      # Cliente público (métodos nombrados)
+    validations/       # Zod (reserva, booking, contacto)
+    site-config.ts     # Branding desde env
+```
+
+Convenciones: Server Components por defecto; `"use client"` en wizard e interactivos; alias `@/*` → `./src/*`; UI en español, código en inglés; combinar clases con `cn()`; respetar `prefers-reduced-motion`.
+
+<!-- section:development -->
+## 🛠️ Desarrollo
+
+```bash
+pnpm dev          # puerto 3002
+pnpm build
+pnpm start        # puerto 3002
+pnpm type-check
+pnpm lint
+pnpm clean        # elimina .next
+```
+
+Reglas: `.cursor/rules/`. Skill de código: `.cursor/skills/improve-public-web-code/`. Fuente para agentes: `AGENTS.md`.
+
+No usar cliente JWT de admin ni rutas `/api/reservations` internas.
+
+<!-- section:testing -->
+## ✅ Pruebas
+
+```bash
+pnpm type-check
+pnpm lint
+```
+
+No hay suite de pruebas unitarias en este repositorio; la verificación local habitual es type-check y lint.
+
+<!-- section:roadmap -->
+## 🗺️ Hoja de ruta y estado
+
+**Fuera de alcance actual**
 
 - Pasarela de pagos o DTE en el sitio público
 - Cuenta de huésped / login
@@ -190,10 +190,23 @@ Incluye el origen HTTPS de este sitio en `CORS_ORIGIN` del API. Branding por env
 - SaaS multi-hotel o panel central de tenants
 - Monorepo
 
-## Documentación adicional
+<!-- section:contributing -->
+## 💭 Soporte y contribuciones
 
-| Documento | Contenido |
-|-----------|-----------|
-| `AGENTS.md` | Fuente de verdad para agentes |
-| `.env.example` | Variables de branding y API |
-| `erp-core-api` módulo `public` | Implementación y rate limit del API público |
+- Documentación de agentes: `AGENTS.md` y `.env.example`.
+- Implementación del API público: módulo `public` en `erp-core-api`.
+
+**Git**
+
+- Rama principal: `main` (solo vía PR). Integración: `feature-public`.
+- Ramas: `feat/<nombre>`, `fix/<nombre>`, `chore/<nombre>`.
+- Commits en español con prefijo convencional. **Prohibido** `Co-authored-by:`.
+
+```bash
+git config core.hooksPath .githooks
+```
+
+<!-- section:license -->
+## 📄 Licencia
+
+MIT. Ver [LICENSE](LICENSE).
