@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+/** Configuración de runtime/build: API pública, imports optimizados e imágenes remotas permitidas. */
 const nextPublicApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
 
 const nextConfig: NextConfig = {

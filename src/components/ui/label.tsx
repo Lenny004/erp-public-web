@@ -5,6 +5,7 @@ import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+/** Etiqueta accesible basada en el primitive de Radix y estilos del sitio. */
 function Label({
   className,
   ...props

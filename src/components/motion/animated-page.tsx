@@ -5,7 +5,9 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface AnimatedPageProps {
+  /** Contenido de la ruta que se reinicia cuando cambia el pathname. */
   children: ReactNode;
+  /** Clases adicionales para el contenedor de transición. */
   className?: string;
 }
 

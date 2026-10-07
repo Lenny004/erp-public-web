@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { PublicRoomImage } from "@/lib/api/public";
@@ -9,9 +8,11 @@ import { resolveMediaUrl } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface RoomImageCarouselProps {
+  /** Imágenes válidas del catálogo que pueden recorrerse. */
   images: PublicRoomImage[];
   /** Texto alternativo por defecto si una imagen no tiene altText. */
   fallbackAlt: string;
+  /** Clases adicionales del contenedor del carrusel. */
   className?: string;
 }
 
@@ -54,14 +55,18 @@ export function RoomImageCarousel({
     setIndex(dotIndex);
   };
 
+  if (!current?.url) return null;
+
   return (
     <div className={cn("group/carousel relative size-full", className)}>
-      <Image
+      {/*
+        Las fotos del catálogo pueden venir de cualquier host. next/image
+        lanza si el dominio no está en remotePatterns y deja la página en blanco.
+      */}
+      <img
         src={resolveMediaUrl(current.url)}
         alt={current.altText ?? fallbackAlt}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-        sizes="(max-width: 768px) 100vw, 33vw"
+        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
       />
 
       {count > 1 && (

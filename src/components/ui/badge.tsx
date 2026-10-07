@@ -35,6 +35,7 @@ const badgeVariants = cva(
 
 export type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>["variant"]>
 
+/** Chip reutilizable para estados o categorías breves dentro de la interfaz. */
 function Badge({
   className,
   variant,

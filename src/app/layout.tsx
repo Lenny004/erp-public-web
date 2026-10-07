@@ -11,6 +11,7 @@ const outfitSans = Outfit({
   display: "swap",
 });
 
+/** Metadatos globales derivados de la configuración white-label del sitio. */
 export const metadata: Metadata = {
   title: {
     default: siteConfig.brandName,
@@ -23,6 +24,10 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Layout raíz del App Router: aplica idioma y fuente globales, registra los
+ * proveedores de cliente y mantiene la estructura común de navegación.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

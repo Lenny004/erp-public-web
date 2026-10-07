@@ -27,8 +27,11 @@ export interface PublicRoom {
 
 /** Parámetros para consultar disponibilidad en un rango de fechas. */
 export interface AvailabilityRequest {
+  /** Fecha de entrada en formato `YYYY-MM-DD`. */
   checkin: string;
+  /** Fecha de salida en formato `YYYY-MM-DD`. */
   checkout: string;
+  /** Número de huéspedes usado para filtrar la capacidad, cuando se indica. */
   guests?: number;
 }
 
@@ -47,13 +50,18 @@ export interface AvailabilityResponse {
 
 /** Datos del formulario de reserva enviados al API. */
 export interface CreateReservationRequest {
+  /** Identificador de la habitación seleccionada. */
   roomId: string;
+  /** Rango de estadía en formato `YYYY-MM-DD`. */
   checkin: string;
   checkout: string;
+  /** Datos de contacto que el hotel usará para revisar la solicitud. */
   guestName: string;
   email: string;
   phone: string;
+  /** Número de huéspedes que se registra en la solicitud. */
   guestCount: number;
+  /** Observaciones opcionales del huésped. */
   notes?: string;
 }
 

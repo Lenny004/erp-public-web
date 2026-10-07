@@ -57,6 +57,10 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * Botón base con variantes visuales y opción `asChild` para delegar el elemento
+ * semántico a un único hijo compatible con Radix Slot.
+ */
 function Button({
   className,
   variant = "default",

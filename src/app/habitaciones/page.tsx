@@ -18,6 +18,7 @@ function buildListingSubtitle(): string {
   return "Explora espacios cómodos y reserva tu estadía en línea.";
 }
 
+/** Página pública que presenta el catálogo de habitaciones disponibles. */
 export default function HabitacionesPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-16 lg:px-8">

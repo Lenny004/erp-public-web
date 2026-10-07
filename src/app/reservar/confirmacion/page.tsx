@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 };
 
 interface ConfirmacionPageProps {
+  /** Parámetros de la URL; `id` identifica la solicitud recién creada cuando existe. */
   searchParams: Promise<{ id?: string }>;
 }
 

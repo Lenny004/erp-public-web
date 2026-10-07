@@ -3,11 +3,15 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 interface InputProps extends React.ComponentProps<"input"> {
+  /** Icono decorativo situado al inicio del campo. */
   leftIcon?: React.ReactNode
+  /** Icono situado al final del campo, opcionalmente interactivo. */
   rightIcon?: React.ReactNode
+  /** Acción ejecutada al pulsar el icono derecho, si se proporciona. */
   onRightIconClick?: () => void
 }
 
+/** Campo base que admite iconos superpuestos sin cambiar la API nativa de input. */
 function Input({ className, type, leftIcon, rightIcon, onRightIconClick, ...props }: InputProps) {
   // Anillos de foco suaves para formularios sobre fondo blanco (marketplace).
   const base =

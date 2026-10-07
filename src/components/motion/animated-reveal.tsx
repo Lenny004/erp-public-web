@@ -4,7 +4,9 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 interface AnimatedRevealProps {
+  /** Contenido que recibe la transición de entrada. */
   children: ReactNode;
+  /** Clases adicionales del contenedor animado. */
   className?: string;
 }
 

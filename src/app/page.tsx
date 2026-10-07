@@ -25,6 +25,7 @@ const WHY_POINTS = [
   },
 ] as const;
 
+/** Portada pública: hero de marca, búsqueda, habitaciones destacadas y beneficios. */
 export default function HomePage() {
   return (
     <>

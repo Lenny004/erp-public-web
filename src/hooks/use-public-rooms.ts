@@ -5,7 +5,7 @@ import { publicApi } from "@/lib/api/public";
 
 /**
  * Catálogo de habitaciones publicadas en la API pública.
- * Cache key estable para invalidación cruzada si se añaden mutaciones futuras.
+ * La clave identifica de forma estable esta consulta dentro de React Query.
  */
 export function usePublicRooms() {
   return useQuery({

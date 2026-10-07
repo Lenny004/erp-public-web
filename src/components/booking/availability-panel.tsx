@@ -5,13 +5,19 @@ import type { PublicRoom } from "@/lib/api/public";
 import { RoomCard } from "@/components/rooms/room-card";
 
 interface AvailabilityPanelProps {
+  /** Habitaciones devueltas por la búsqueda actual. */
   rooms: PublicRoom[];
+  /** Identificador de la habitación elegida para aplicar el estado seleccionado. */
   selectedRoomId?: string | null;
+  /** Notifica la habitación elegida desde una tarjeta interactiva. */
   onSelectRoom: (room: PublicRoom) => void;
-  /** Query string con fechas para enlaces de reserva directa. */
+  /** Query string con fechas y huéspedes para enlaces de reserva directa. */
   bookingQuery?: string;
+  /** Indica que la consulta sigue en curso. */
   isLoading?: boolean;
+  /** Mensaje que se muestra cuando la consulta terminó con error. */
   errorMessage?: string | null;
+  /** Texto alternativo para el estado sin resultados. */
   emptyMessage?: string;
 }
 

@@ -18,6 +18,7 @@ interface RoomCardProps {
   onSelect?: (room: PublicRoom) => void;
   /** Query string opcional para prellenar fechas en /reservar. */
   bookingQuery?: string;
+  /** Clases adicionales del enlace o botón que envuelve la tarjeta. */
   className?: string;
 }
 

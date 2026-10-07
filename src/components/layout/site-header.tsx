@@ -11,15 +11,15 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { publicApi } from "@/lib/api/public";
 
-/** Pixel threshold before the home header transitions from transparent to solid. */
+/** Umbral de desplazamiento antes de volver sólido el header de la portada. */
 const SCROLL_SOLID_THRESHOLD = 24;
 
-/** Shared header bar height — keep spacer in sync when adjusting layout. */
+/** Altura compartida del header; mantiene sincronizado el espacio reservado. */
 const HEADER_HEIGHT_CLASS = "h-[72px]";
 
 /**
- * Primary navigation links (excluding the "Reservar" CTA, which lives in the action cluster).
- * Labels are Spanish for end users; hrefs stay English route segments.
+ * Enlaces de navegación principal; el CTA «Reservar» vive en el grupo de acciones.
+ * Las etiquetas son visibles en español y los segmentos de ruta se mantienen en inglés.
  */
 const NAV_LINKS = [
   { href: "/", label: "Inicio" },
@@ -28,10 +28,10 @@ const NAV_LINKS = [
 ] as const;
 
 /**
- * Marketplace-style sticky header inspired by Airbnb:
- * - Frosted white bar with subtle border on most routes
- * - Transparent overlay on the home hero until the user scrolls
- * - Centered understated nav on desktop, polished slide-in drawer on mobile
+ * Header fijo del sitio público:
+ * - Barra translúcida con borde sutil en las rutas internas.
+ * - Superposición transparente sobre el hero hasta que se desplaza la portada.
+ * - Navegación centrada en escritorio y panel deslizable en móvil.
  */
 export function SiteHeader() {
   const pathname = usePathname();
@@ -42,26 +42,27 @@ export function SiteHeader() {
   const [brandName, setBrandName] = useState(siteConfig.brandName);
 
   useEffect(() => {
+    // El perfil público puede reemplazar la marca de fallback definida en build.
     publicApi.getCompanyProfile().then((company) => {
       if (company?.commercialName || company?.legalName) setBrandName(company.commercialName || company.legalName);
     }).catch(() => undefined);
   }, []);
 
-  /** True when the header floats over the hero with no solid background. */
+  /** Indica que el header flota sobre el hero sin fondo sólido. */
   const isTransparent = isHome && !scrolled;
 
   const handleScroll = useCallback(() => {
     setScrolled(window.scrollY > SCROLL_SOLID_THRESHOLD);
   }, []);
 
-  // Track scroll position for the home-page transparent → solid transition.
+  // Sigue el scroll para alternar el header de transparente a sólido en la portada.
   useEffect(() => {
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
-  // Reset scroll state when navigating away from home.
+  // Reinicia el estado de scroll al salir de la portada.
   useEffect(() => {
     if (!isHome) {
       setScrolled(false);
@@ -70,12 +71,12 @@ export function SiteHeader() {
     }
   }, [isHome, handleScroll]);
 
-  // Close the mobile drawer on route change.
+  // Cierra el panel móvil al cambiar de ruta.
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
 
-  // Prevent background scroll while the mobile drawer is open.
+  // Evita el scroll del fondo mientras el panel móvil está abierto.
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
@@ -95,7 +96,7 @@ export function SiteHeader() {
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-          {/* Brand — left anchor, larger semibold wordmark */}
+          {/* Marca: ancla izquierda con wordmark semibold. */}
           <Link
             href="/"
             className={cn(
@@ -108,7 +109,7 @@ export function SiteHeader() {
             {brandName}
           </Link>
 
-          {/* Desktop nav — absolutely centered for a balanced marketplace layout */}
+          {/* Navegación de escritorio centrada para equilibrar el layout. */}
           <nav
             className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex"
             aria-label="Navegación principal"
@@ -138,7 +139,7 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* Right cluster — primary CTA + mobile toggle */}
+          {/* Grupo derecho: CTA principal y control del menú móvil. */}
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
             <Button
               asChild
@@ -150,7 +151,7 @@ export function SiteHeader() {
               <Link href="/reservar">Reservar</Link>
             </Button>
 
-            {/* Mobile menu trigger — pill shape mirrors Airbnb host menu */}
+            {/* Activador del menú móvil con forma de píldora. */}
             <Button
               type="button"
               variant="outline"
@@ -179,12 +180,12 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {/* Reserve layout space on non-home routes so content is not hidden under fixed header */}
+      {/* Reserva espacio en rutas internas para no ocultar el contenido bajo el header fijo. */}
       {!isHome && (
         <div className={cn(HEADER_HEIGHT_CLASS, "shrink-0")} aria-hidden />
       )}
 
-      {/* Mobile drawer — full-screen overlay with slide-in panel */}
+      {/* Panel móvil: overlay de pantalla completa con panel deslizable. */}
       <div
         id="mobile-nav-drawer"
         className={cn(
@@ -193,7 +194,7 @@ export function SiteHeader() {
         )}
         aria-hidden={!mobileOpen}
       >
-        {/* Backdrop */}
+        {/* Fondo que permite cerrar el panel. */}
         <button
           type="button"
           className={cn(
@@ -205,7 +206,7 @@ export function SiteHeader() {
           onClick={() => setMobileOpen(false)}
         />
 
-        {/* Panel slides in from the right */}
+        {/* Panel que entra desde la derecha. */}
         <div
           className={cn(
             "absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-card shadow-2xl transition-transform duration-300 ease-out",
@@ -215,7 +216,7 @@ export function SiteHeader() {
           aria-modal="true"
           aria-label="Menú de navegación"
         >
-          {/* Drawer header */}
+          {/* Encabezado del panel. */}
           <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
             <span className="text-lg font-semibold tracking-tight text-foreground">
               {brandName}
@@ -232,7 +233,7 @@ export function SiteHeader() {
             </Button>
           </div>
 
-          {/* Drawer links */}
+          {/* Enlaces del panel. */}
           <nav
             className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4"
             aria-label="Menú móvil"
@@ -259,7 +260,7 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* Drawer footer CTA */}
+          {/* CTA inferior del panel. */}
           <div className="border-t border-border/60 p-4">
             <Button asChild variant="primary" size="pill" shape="pill" className="w-full">
               <Link href="/reservar" onClick={() => setMobileOpen(false)}>

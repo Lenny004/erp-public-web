@@ -3,7 +3,9 @@
 import { Children, isValidElement, type ReactNode } from "react";
 
 interface AnimatedStaggerGridProps {
+  /** Hijos válidos que se envuelven individualmente para escalonar su entrada. */
   children: ReactNode;
+  /** Clases del grid que conserva la responsabilidad del layout. */
   className?: string;
 }
 
