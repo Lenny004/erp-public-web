@@ -1,4 +1,5 @@
 import { getApiBaseUrl } from "@/lib/api-base-url";
+import { MENSAJES_ERROR, mensajeParaUsuario } from "@/lib/mensajes-error";
 
 // ---------------------------------------------------------------------------
 // Tipos de error
@@ -16,6 +17,9 @@ export interface ApiErrorDetails {
  * No incluye lógica de JWT ni reintentos de autenticación.
  */
 export class ApiError extends Error {
+  /** `true` cuando `manejarError` ya mostró el toast (evita duplicados). */
+  notified = false;
+
   constructor(
     /** Código HTTP (0 indica fallo de red). */
     public readonly statusCode: number,
@@ -70,7 +74,7 @@ export class PublicApiClient {
     try {
       response = await fetch(url, options);
     } catch {
-      throw new ApiError(0, "No se pudo conectar con el servidor.");
+      throw new ApiError(0, MENSAJES_ERROR.NETWORK);
     }
 
     const body = (await response.json().catch(() => ({}))) as
@@ -82,7 +86,7 @@ export class PublicApiClient {
       const errorBody = body as ApiErrorBody;
       throw new ApiError(
         response.status,
-        errorBody.message ?? `Error ${response.status}`,
+        mensajeParaUsuario(response.status, errorBody.message),
         errorBody.details,
       );
     }

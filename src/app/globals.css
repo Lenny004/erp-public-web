@@ -141,6 +141,40 @@
   --sidebar-ring: var(--accent);
 }
 
+/* Tokens de sistema (skill ui-ux-componentes): espaciado, sombras, movimiento, capas y controles. */
+:root {
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --border-width: 1px;
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.06), 0 4px 16px oklch(0% 0 0 / 0.08);
+  --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.06), 0 8px 24px oklch(0% 0 0 / 0.12);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-modal: 30;
+  --z-toast: 40;
+  --control-height: 2.75rem;
+  --focus-ring: color-mix(in oklch, var(--ring) 35%, transparent);
+  --overlay: oklch(0% 0 0 / 0.5);
+  --skeleton-base: var(--muted);
+  --skeleton-highlight: color-mix(in oklch, var(--muted) 55%, var(--card));
+}
+
+.dark {
+  --shadow-sm: 0 0 0 1px var(--border);
+  --shadow-md: 0 0 0 1px var(--border), 0 8px 24px oklch(0% 0 0 / 0.4);
+  --overlay: oklch(0% 0 0 / 0.65);
+  --skeleton-highlight: color-mix(in oklch, var(--muted) 70%, var(--foreground));
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -298,11 +332,51 @@
   .icon--interactive {
     cursor: pointer;
     opacity: 0.92;
-    transition: opacity 150ms ease;
+    transition: opacity var(--duration-fast) var(--ease);
   }
 
   .icon--interactive:hover {
     opacity: 1;
+  }
+
+  /** Skeleton con brillo suave; sin animación si se reduce el movimiento. */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--skeleton-base) 25%,
+      var(--skeleton-highlight) 50%,
+      var(--skeleton-base) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.6s var(--ease) infinite;
+  }
+
+  @keyframes skeleton-shimmer {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  /** Campo de formulario: label fijo arriba, mensaje con espacio reservado. */
+  .field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .field:focus-within .field__label {
+    color: var(--primary);
+  }
+
+  .field--error .field__label,
+  .field__message--error {
+    color: var(--destructive);
+  }
+
+  .field__message {
+    min-height: 1.25rem;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+    color: var(--muted-foreground);
   }
 
   /** Bloque de errores de validación (formularios con Zod / API). */
@@ -346,34 +420,30 @@
 
   /** Sombra sutil para cards de listado (marketplace listing cards). */
   .listing-shadow {
-    box-shadow:
-      0 1px 2px oklch(0% 0 0 / 0.04),
-      0 4px 16px oklch(0% 0 0 / 0.08);
+    box-shadow: var(--shadow-sm);
   }
 
   .listing-shadow:hover {
-    box-shadow:
-      0 2px 4px oklch(0% 0 0 / 0.06),
-      0 8px 24px oklch(0% 0 0 / 0.12);
+    box-shadow: var(--shadow-md);
   }
 
   /** Shell de búsqueda tipo pill — barra flotante estilo marketplace. */
   .pill-search-shell {
     @apply flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5;
-    box-shadow:
-      0 1px 2px oklch(0% 0 0 / 0.04),
-      0 6px 20px oklch(0% 0 0 / 0.08);
-    transition: box-shadow 200ms ease;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow var(--duration-base) var(--ease);
   }
 
   .pill-search-shell:focus-within {
     @apply border-foreground/15 ring-2 ring-ring;
-    box-shadow:
-      0 2px 4px oklch(0% 0 0 / 0.06),
-      0 8px 28px oklch(0% 0 0 / 0.12);
+    box-shadow: var(--shadow-md);
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+    }
+
     *,
     *::before,
     *::after {

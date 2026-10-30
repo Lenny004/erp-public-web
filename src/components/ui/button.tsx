@@ -1,10 +1,11 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
+import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring cursor-pointer focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+  "group/button inline-flex shrink-0 items-center justify-center border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring cursor-pointer focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-busy:cursor-progress aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
   {
     variants: {
       variant: {
@@ -17,6 +18,7 @@ const buttonVariants = cva(
         destructive: "bg-destructive text-destructive-foreground hover:opacity-80",
         primary: "bg-primary text-primary-foreground hover:opacity-80",
         white: "bg-primary-foreground text-primary hover:opacity-80",
+        /** Apoyo (cancelar, volver, ver más): sin relleno ni borde. */
         ghost: "text-foreground hover:bg-muted/60",
       },
       // Forma del botón — `pill` para CTAs tipo marketplace (Airbnb).
@@ -68,12 +70,16 @@ function Button({
   size = "default",
   asChild = false,
   icon,
+  loading = false,
+  disabled,
   children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
     icon?: React.ReactNode
+    /** Acción en curso: deshabilita (evita doble clic), marca `aria-busy` y cambia el icono por un spinner. */
+    loading?: boolean
   }) {
   const Comp = asChild ? Slot.Root : "button"
 
@@ -86,6 +92,7 @@ function Button({
         data-shape={shape}
         data-size={size}
         className={cn(buttonVariants({ variant, shape, size }), className)}
+        disabled={disabled}
         {...props}
       >
         {children}
@@ -100,9 +107,17 @@ function Button({
       data-shape={shape}
       data-size={size}
       className={cn(buttonVariants({ variant, shape, size }), className)}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
     >
-      {icon && <span data-icon="inline-start" className="inline-flex items-center">{icon}</span>}
+      {loading ? (
+        <span data-icon="inline-start" className="inline-flex items-center">
+          <Loader2 className="size-4 animate-spin" aria-hidden />
+        </span>
+      ) : (
+        icon && <span data-icon="inline-start" className="inline-flex items-center">{icon}</span>
+      )}
       {children}
     </Comp>
   )

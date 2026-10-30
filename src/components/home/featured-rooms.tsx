@@ -5,8 +5,9 @@ import { ArrowRight } from "lucide-react";
 import { usePublicRooms } from "@/hooks/use-public-rooms";
 import { AnimatedStaggerGrid } from "@/components/motion/animated-stagger-grid";
 import { RoomCard } from "@/components/rooms/room-card";
-import { ListingSkeleton } from "@/components/rooms/listing-skeleton";
-import { Button } from "@/components/ui/button";
+import { ListingGridSkeleton } from "@/components/rooms/listing-grid-skeleton";
+import { EmptyState, ErrorState } from "@/components/shared/states";
+import { mensajeDeError } from "@/lib/errores";
 
 /** Máximo de habitaciones mostradas en el home (estilo grid de Airbnb). */
 const FEATURED_LIMIT = 6;
@@ -16,7 +17,7 @@ const FEATURED_LIMIT = 6;
  * Consume el catálogo público y muestra hasta 6 tarjetas interactivas.
  */
 export function FeaturedRooms() {
-  const { data: rooms, isLoading, isError, error, refetch } = usePublicRooms();
+  const { data: rooms, isLoading, isError, error, refetch, isFetching } = usePublicRooms();
 
   return (
     <div className="space-y-10">
@@ -41,38 +42,23 @@ export function FeaturedRooms() {
         </Link>
       </div>
 
-      {isLoading && (
-        <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: FEATURED_LIMIT }, (_, index) => (
-            <ListingSkeleton key={`featured-skeleton-${index}`} />
-          ))}
-        </div>
-      )}
+      {isLoading && <ListingGridSkeleton count={FEATURED_LIMIT} />}
 
       {isError && (
-        <div
-          role="alert"
-          className="rounded-2xl border border-destructive/20 bg-destructive/5 p-6 text-center"
-        >
-          <p className="text-destructive">
-            {error?.message ?? "No se pudo cargar el catálogo de habitaciones."}
-          </p>
-          <Button
-            type="button"
-            variant="outline"
-            shape="pill"
-            className="mt-4"
-            onClick={() => refetch()}
-          >
-            Reintentar
-          </Button>
-        </div>
+        <ErrorState
+          title="No pudimos cargar las habitaciones"
+          message={mensajeDeError(error)}
+          onRetry={() => refetch()}
+          retrying={isFetching}
+        />
       )}
 
       {!isLoading && !isError && !rooms?.length && (
-        <p className="rounded-2xl border border-dashed border-border py-16 text-center text-muted-foreground">
-          Pronto publicaremos nuestras habitaciones. Vuelve en unos días.
-        </p>
+        <EmptyState
+          className="max-w-none"
+          title="Pronto publicaremos nuestras habitaciones"
+          description="Vuelve en unos días."
+        />
       )}
 
       {!isLoading && !isError && !!rooms?.length && (

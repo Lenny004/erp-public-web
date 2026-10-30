@@ -2,169 +2,162 @@
 
 /** Formulario público de contacto; no expone datos internos ni requiere sesión. */
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import {
   contactFormSchema,
   type ContactFormValues,
 } from "@/lib/validations/contact";
 import { useContact } from "@/hooks/use-contact";
+import { useFormValidation } from "@/hooks/use-form-validation";
+import { manejarError } from "@/lib/errores";
 import { Button } from "@/components/ui/button";
+import { Field, messageId } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+type Campo = keyof ContactFormValues;
+
+const IDS: Record<Campo, string> = {
+  name: "contact-name",
+  email: "contact-email",
+  phone: "contact-phone",
+  message: "contact-message",
+};
+
+const VACIO: ContactFormValues = { name: "", email: "", phone: "", message: "" };
+
 /**
- * Formulario de contacto con validación Zod y mutación useContact.
- * Muestra toast de éxito y resetea campos al enviar.
+ * Formulario de contacto con validación Zod (al salir del campo) y mutación useContact.
+ * Muestra toast de éxito y resetea campos al enviar; si falla, conserva lo escrito.
  */
 export function ContactForm() {
   const { mutateAsync, isPending } = useContact();
-  const [values, setValues] = useState<ContactFormValues>({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormValues, string>>>({});
+  const [values, setValues] = useState<ContactFormValues>(VACIO);
+  const getValues = useCallback(() => values, [values]);
+  const { errors, setErrors, validarCampo, alCambiar, validarTodo } =
+    useFormValidation<Campo, ContactFormValues>(contactFormSchema, getValues);
 
-  function updateField<K extends keyof ContactFormValues>(
-    key: K,
-    value: ContactFormValues[K],
-  ) {
-    setValues((prev) => ({ ...prev, [key]: value }));
-    // Limpia el error del campo al editar para feedback inmediato
-    if (errors[key]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      });
-    }
+  function updateField<K extends Campo>(key: K, value: ContactFormValues[K]) {
+    const next = { ...values, [key]: value };
+    setValues(next);
+    alCambiar(key, next);
   }
+
+  /** Props comunes de accesibilidad y validación por campo. */
+  const control = (campo: Campo) => ({
+    id: IDS[campo],
+    "aria-invalid": Boolean(errors[campo]),
+    "aria-describedby": messageId(IDS[campo]),
+    onBlur: () => validarCampo(campo),
+  });
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setErrors({});
+    if (isPending) return;
 
-    const parsed = contactFormSchema.safeParse(values);
-    if (!parsed.success) {
-      const fieldErrors: Partial<Record<keyof ContactFormValues, string>> = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path[0] as keyof ContactFormValues;
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-      }
-      setErrors(fieldErrors);
-      return;
-    }
+    const data = validarTodo(IDS);
+    if (!data) return;
 
     try {
-      const result = await mutateAsync(parsed.data);
+      const result = await mutateAsync(data);
       toast.success(result.message);
-      setValues({ name: "", email: "", phone: "", message: "" });
+      setValues(VACIO);
+      setErrors({});
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "No se pudo enviar el mensaje",
-      );
+      manejarError(error, {
+        contexto: "contacto:enviar",
+        fallback: "No se pudo enviar el mensaje.",
+        onCampos: (campos) =>
+          setErrors(
+            Object.fromEntries(
+              Object.entries(campos).map(([k, v]) => [k, v[0]]),
+            ) as Partial<Record<Campo, string>>,
+          ),
+      });
     }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8"
+      noValidate
+      className="space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8"
       aria-label="Formulario de contacto"
     >
       <div className="space-y-1 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">Escríbenos</h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Completa el formulario y nuestro equipo se pondrá en contacto contigo.
+          Te respondemos por correo o teléfono.
         </p>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="contact-name">Nombre completo</Label>
+      <Field id={IDS.name} label="Nombre completo" required error={errors.name}>
         <Input
-          id="contact-name"
+          {...control("name")}
           value={values.name}
           onChange={(e) => updateField("name", e.target.value)}
-          placeholder="Ej. María González"
+          placeholder="Nombre y apellidos"
           autoComplete="name"
-          aria-invalid={Boolean(errors.name)}
+          maxLength={120}
+          aria-required
         />
-        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
-      </div>
+      </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="contact-email">Correo electrónico</Label>
+      <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+        <Field id={IDS.email} label="Correo electrónico" required error={errors.email}>
           <Input
-            id="contact-email"
+            {...control("email")}
             type="email"
+            inputMode="email"
             value={values.email}
             onChange={(e) => updateField("email", e.target.value)}
-            placeholder="tu@correo.com"
+            placeholder="nombre@dominio.com"
             autoComplete="email"
-            aria-invalid={Boolean(errors.email)}
+            aria-required
           />
-          {errors.email && (
-            <p className="text-xs text-destructive">{errors.email}</p>
-          )}
-        </div>
+        </Field>
 
-        <div className="space-y-2">
-          <Label htmlFor="contact-phone">
-            Teléfono
-            <span className="ml-1 font-normal text-muted-foreground">(opcional)</span>
-          </Label>
+        <Field id={IDS.phone} label="Teléfono" optional error={errors.phone}>
           <Input
-            id="contact-phone"
+            {...control("phone")}
             type="tel"
+            inputMode="tel"
             value={values.phone ?? ""}
             onChange={(e) => updateField("phone", e.target.value)}
-            placeholder="+503 0000-0000"
+            placeholder="0000-0000"
             autoComplete="tel"
-            aria-invalid={Boolean(errors.phone)}
+            maxLength={30}
           />
-          {errors.phone && (
-            <p className="text-xs text-destructive">{errors.phone}</p>
-          )}
-        </div>
+        </Field>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="contact-message">Mensaje</Label>
+      <Field id={IDS.message} label="Mensaje" required error={errors.message} hint="Mínimo 10 caracteres.">
         <Textarea
-          id="contact-message"
+          {...control("message")}
           value={values.message}
           onChange={(e) => updateField("message", e.target.value)}
           rows={5}
-          placeholder="Cuéntanos sobre tu consulta, fechas de interés o tipo de habitación…"
+          placeholder="Fechas, tipo de habitación o tu consulta"
           className="min-h-32 resize-y"
-          aria-invalid={Boolean(errors.message)}
+          maxLength={2000}
+          aria-required
         />
-        {errors.message && (
-          <p className="text-xs text-destructive">{errors.message}</p>
-        )}
-      </div>
+      </Field>
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-relaxed text-muted-foreground">
           Al enviar aceptas que usemos tus datos para responder tu consulta.
         </p>
-        <Button type="submit" disabled={isPending} size="action" className="shrink-0">
-          {isPending ? (
-            <>
-              <Loader2 className="size-4 animate-spin" aria-hidden />
-              Enviando…
-            </>
-          ) : (
-            <>
-              <Send className="size-4" aria-hidden />
-              Enviar mensaje
-            </>
-          )}
+        <Button
+          type="submit"
+          loading={isPending}
+          icon={<Send className="size-4" aria-hidden />}
+          size="action"
+          className="shrink-0 sm:min-w-44"
+        >
+          {isPending ? "Enviando…" : "Enviar mensaje"}
         </Button>
       </div>
     </form>

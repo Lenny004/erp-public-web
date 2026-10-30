@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 interface ListingSkeletonProps {
@@ -11,12 +12,12 @@ interface ListingSkeletonProps {
 export function ListingSkeleton({ className }: ListingSkeletonProps) {
   return (
     <article aria-hidden className={cn("w-full", className)}>
-      <div className="aspect-square animate-pulse rounded-xl bg-muted" />
+      <Skeleton className="aspect-square rounded-xl" />
       <div className="space-y-2 pt-3">
-        <div className="h-4 w-3/4 animate-pulse rounded-md bg-muted" />
-        <div className="h-3.5 w-1/2 animate-pulse rounded-md bg-muted" />
-        <div className="h-3.5 w-2/5 animate-pulse rounded-md bg-muted" />
-        <div className="h-4 w-1/3 animate-pulse rounded-md bg-muted pt-0.5" />
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3.5 w-1/2" />
+        <Skeleton className="h-3.5 w-2/5" />
+        <Skeleton className="h-4 w-1/3" />
       </div>
     </article>
   );

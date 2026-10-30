@@ -13,9 +13,9 @@ interface InputProps extends React.ComponentProps<"input"> {
 
 /** Campo base que admite iconos superpuestos sin cambiar la API nativa de input. */
 function Input({ className, type, leftIcon, rightIcon, onRightIconClick, ...props }: InputProps) {
-  // Anillos de foco suaves para formularios sobre fondo blanco (marketplace).
+  // Foco: cambia color de borde + anillo (box-shadow); nunca el grosor ni el tamaño.
   const base =
-    "h-11 w-full min-w-0 rounded-md border border-input bg-card px-3 py-1 text-sm text-foreground shadow-sm transition-colors outline-hidden placeholder:text-muted-foreground/60 focus-visible:border-foreground/15 focus-visible:ring-1 focus-visible:ring-foreground/10 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive/15"
+    "h-(--control-height) w-full min-w-0 rounded-md border border-input bg-card px-3 py-1 text-base text-foreground shadow-sm transition-[border-color,box-shadow] duration-(--duration-fast) outline-hidden placeholder:text-muted-foreground sm:text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-(--focus-ring) disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-70 aria-invalid:border-destructive aria-invalid:focus-visible:ring-destructive/20"
 
   if (leftIcon || rightIcon) {
     return (
