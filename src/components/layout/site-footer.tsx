@@ -32,7 +32,7 @@ export function SiteFooter() {
   const [company, setCompany] = useState<{ name: string; address: string; phone: string; email: string }>({ name: siteConfig.brandName, address: siteConfig.contactAddress, phone: siteConfig.contactPhone, email: siteConfig.contactEmail });
 
   useEffect(() => {
-    publicApi.getCompanyProfile().then((data) => { if (data) setCompany({ name: data.commercialName || data.legalName, address: data.address || siteConfig.contactAddress, phone: data.phone || siteConfig.contactPhone, email: data.email || siteConfig.contactEmail }); }).catch(() => undefined);
+    publicApi.getCompanyProfile().then((data) => { if (data) setCompany({ name: data.commercialName?.trim() || data.legalName?.trim() || siteConfig.brandName, address: data.address || siteConfig.contactAddress, phone: data.phone || siteConfig.contactPhone, email: data.email || siteConfig.contactEmail }); }).catch(() => undefined);
   }, []);
 
   return (
@@ -111,7 +111,7 @@ export function SiteFooter() {
       <div className="border-t border-border/30 bg-muted/80">
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6">
           <p className="text-center text-xs text-muted-foreground">
-            © {year} {company.name}. Todos los derechos reservados.
+            © {year}{company.name ? ` ${company.name}` : ""}. Todos los derechos reservados.
           </p>
         </div>
       </div>
