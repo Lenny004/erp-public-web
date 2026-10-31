@@ -37,10 +37,10 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-border/40 bg-card">
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-20">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4 lg:gap-10">
           {/* Marca y propuesta de valor */}
-          <div className="space-y-4 sm:col-span-2 lg:col-span-1">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
             <Link
               href="/"
               className="inline-block text-lg font-semibold tracking-tight text-foreground transition-opacity hover:opacity-80"
@@ -67,7 +67,7 @@ export function SiteFooter() {
           </div>
 
           {/* Contacto */}
-          <div className="space-y-4">
+          <div className="order-last col-span-2 space-y-4 lg:order-none lg:col-span-1">
             <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
               Contacto
             </p>

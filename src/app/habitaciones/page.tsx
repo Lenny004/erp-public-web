@@ -21,9 +21,9 @@ function buildListingSubtitle(): string {
 /** Página pública que presenta el catálogo de habitaciones disponibles. */
 export default function HabitacionesPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-16 lg:px-8">
-      <header className="mb-12 space-y-3 sm:mb-14 sm:space-y-4">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+    <div className="mx-auto max-w-7xl px-4 pb-16 pt-10 sm:px-6 sm:pb-20 sm:pt-16 lg:px-8">
+      <header className="mb-8 space-y-2 sm:mb-12 sm:space-y-3">
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Habitaciones
         </h1>
         <p className="max-w-xl text-base text-muted-foreground sm:text-lg">
