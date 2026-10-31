@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Home, Mail, Phone } from "lucide-react";
 import { ConfirmacionReveal } from "@/app/reservar/confirmacion/confirmacion-content";
+import { ReferenciaReserva } from "@/app/reservar/confirmacion/referencia-reserva";
 import { siteConfig } from "@/lib/site-config";
 import { Button } from "@/components/ui/button";
 
@@ -75,17 +76,12 @@ export default async function ConfirmacionPage({
           </div>
 
           {id ? (
-            <div className="mt-8 rounded-2xl border border-border/80 bg-card px-6 py-5 text-center shadow-sm">
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Número de referencia
-              </p>
-              <p className="mt-2 font-mono text-lg font-semibold tracking-wide text-foreground">
-                {id}
-              </p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                Guarda este código para cualquier consulta sobre tu reserva.
-              </p>
-            </div>
+            <ReferenciaReserva
+              reference={id}
+              brandName={siteConfig.brandName}
+              contactEmail={siteConfig.contactEmail}
+              contactPhone={siteConfig.contactPhone}
+            />
           ) : (
             <p className="mt-8 rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-5 text-center text-sm text-muted-foreground">
               Guarda este enlace o revisa tu correo para el número de referencia.

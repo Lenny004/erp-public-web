@@ -16,7 +16,7 @@ interface RoomCardProps {
   selected?: boolean;
   /** Callback al elegir habitación dentro del panel de disponibilidad. */
   onSelect?: (room: PublicRoom) => void;
-  /** Query string opcional para prellenar fechas en /reservar. */
+  /** Query string opcional (`&checkin=…`) para conservar fechas en la ficha. */
   bookingQuery?: string;
   /** Clases adicionales del enlace o botón que envuelve la tarjeta. */
   className?: string;
@@ -36,7 +36,10 @@ export function RoomCard({
   const apiImages = room.images.filter((img) => img.url);
   const hasApiImages = apiImages.length > 0;
   const placeholderUrl = getPlaceholderRoomImage(room.id || room.name);
-  const reserveHref = `/reservar?roomId=${room.id}${bookingQuery}`;
+  const dateQuery = bookingQuery.replace(/^&/, "");
+  const reserveHref = dateQuery
+    ? `/habitaciones/${room.id}?${dateQuery}`
+    : `/habitaciones/${room.id}`;
 
   const cardClassName = cn(
     "group block w-full text-left transition-opacity duration-200 hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl",

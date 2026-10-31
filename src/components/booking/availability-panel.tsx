@@ -9,8 +9,8 @@ interface AvailabilityPanelProps {
   rooms: PublicRoom[];
   /** Identificador de la habitación elegida para aplicar el estado seleccionado. */
   selectedRoomId?: string | null;
-  /** Notifica la habitación elegida desde una tarjeta interactiva. */
-  onSelectRoom: (room: PublicRoom) => void;
+  /** Si se define, la tarjeta elige en la misma página; si no, abre la ficha. */
+  onSelectRoom?: (room: PublicRoom) => void;
   /** Query string con fechas y huéspedes para enlaces de reserva directa. */
   bookingQuery?: string;
   /** Indica que la consulta sigue en curso. */
@@ -85,8 +85,7 @@ export function AvailabilityPanel({
       {/* Contador de resultados — refuerza claridad tipo checkout */}
       <p className="text-sm text-muted-foreground">
         <span className="font-medium text-foreground">{rooms.length}</span>{" "}
-        habitación{rooms.length !== 1 ? "es" : ""} disponible
-        {rooms.length !== 1 ? "s" : ""}
+        {rooms.length === 1 ? "habitación disponible" : "habitaciones disponibles"}
       </p>
 
       {/* Grilla responsiva de RoomCard — 1/2/3 columnas según viewport */}

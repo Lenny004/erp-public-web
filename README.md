@@ -87,7 +87,7 @@ Servidor local: [http://localhost:3002](http://localhost:3002)
 1. Levanta `erp-core-api` con datos de habitaciones.
 2. Añade `http://localhost:3002` a `CORS_ORIGIN` del API.
 3. Ajusta `.env.local` (marca, contacto, `NEXT_PUBLIC_API_URL`).
-4. Recorre: inicio → habitaciones → disponibilidad → reserva → confirmación.
+4. Recorre: inicio → habitación → comprobar fechas → datos del huésped → confirmación.
 
 **Rutas de la UI**
 
@@ -95,7 +95,9 @@ Servidor local: [http://localhost:3002](http://localhost:3002)
 |------|-------------|
 | `/` | Hero, búsqueda de fechas y habitaciones destacadas |
 | `/habitaciones` | Catálogo público |
-| `/reservar` | Wizard de disponibilidad y datos del huésped |
+| `/habitaciones/[id]` | Ficha: fotos, precio y comprobación de fechas |
+| `/habitaciones/[id]/reservar` | Datos del huésped y envío de la reserva |
+| `/reservar` | Búsqueda de disponibilidad |
 | `/reservar/confirmacion` | Reserva creada (`PENDIENTE`) |
 | `/contacto` | Formulario de contacto |
 | `/legal/terminos` y `/legal/privacidad` | Textos legales |

@@ -86,7 +86,7 @@ export default function HomePage() {
 
       {/*
         SECCIÓN 2 — BÚSQUEDA (bajo el pliegue)
-        Barra tipo píldora que envuelve BookingSearchForm; sin competir con el hero.
+        Misma tarjeta que el paso 1 de /reservar: borde suave, padding amplio y sombra ligera.
       */}
       <section className="public-home__search bg-card py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
@@ -99,9 +99,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Shell redondeado estilo Airbnb — sombra suave, sin borde duro */}
-          <div className="rounded-[2rem] border border-border/80 bg-card p-5 shadow-lg sm:rounded-full sm:p-3 sm:pl-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-            <BookingSearchForm submitLabel="Buscar" />
+          <div className="mx-auto max-w-3xl rounded-2xl border border-border/80 bg-card p-6 shadow-sm sm:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+            <BookingSearchForm submitLabel="Buscar disponibilidad" />
           </div>
         </div>
       </section>

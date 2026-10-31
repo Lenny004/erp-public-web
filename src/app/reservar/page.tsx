@@ -23,11 +23,11 @@ export default function ReservarPage() {
               Reserva en línea
             </p>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Tu estadía, paso a paso
+              Fechas y habitaciones libres
             </h1>
             <p className="text-base leading-relaxed text-muted-foreground">
-              Consulta disponibilidad, elige tu habitación y confirma tus datos
-              con la misma claridad de un checkout moderno.
+              Indica tu estadía y abre la ficha de la habitación para ver fotos,
+              precio y confirmar la reserva.
             </p>
           </header>
         </div>
