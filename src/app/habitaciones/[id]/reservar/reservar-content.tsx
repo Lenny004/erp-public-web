@@ -8,7 +8,12 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import type { GuestDetailsValues } from "@/lib/validations/reservation";
-import { formatDate, formatMoney, nightsBetween } from "@/lib/format";
+import {
+  calculateStayTotal,
+  formatDate,
+  formatMoney,
+  nightsBetween,
+} from "@/lib/format";
 import {
   parseStayQuery,
   roomDetailHref,
@@ -41,6 +46,12 @@ export function ReservarHabitacionContent() {
 
   const availability = useAvailability();
   const createReservation = useCreateReservation();
+  const stayTotal = room && stay
+    ? calculateStayTotal(
+        room.roomType.basePrice,
+        nightsBetween(stay.checkin, stay.checkout),
+      )
+    : null;
 
   async function verifyStay(currentRoom: NonNullable<typeof room>, currentStay: StayQuery) {
     if (currentStay.guests > currentRoom.capacity) {
@@ -79,6 +90,11 @@ export function ReservarHabitacionContent() {
   async function handleCreateReservation(formValues: GuestDetailsValues) {
     if (!room || !stay || status !== "open") {
       toast.error("Confirma primero que la habitación está libre en esas fechas.");
+      return;
+    }
+
+    if (stayTotal === null) {
+      toast.error("No se pudo calcular el total de la estadía.");
       return;
     }
 
@@ -216,7 +232,13 @@ export function ReservarHabitacionContent() {
         </div>
       )}
 
-      {stay && status === "open" && (
+      {stay && status === "open" && stayTotal === null && (
+        <p className="max-w-lg text-sm text-muted-foreground" role="status">
+          No podemos mostrar el total de esta estadía. No es posible continuar con la solicitud.
+        </p>
+      )}
+
+      {stay && status === "open" && stayTotal !== null && (
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
           <div className="order-2 lg:order-1">
             <ReservationForm
@@ -224,7 +246,12 @@ export function ReservarHabitacionContent() {
               onSubmit={handleCreateReservation}
             />
           </div>
-          <StaySummary room={room} stay={stay} detailHref={detailHref} />
+          <StaySummary
+            room={room}
+            stay={stay}
+            detailHref={detailHref}
+            total={stayTotal}
+          />
         </div>
       )}
     </div>
@@ -235,6 +262,7 @@ function StaySummary({
   room,
   stay,
   detailHref,
+  total,
 }: {
   room: {
     name: string;
@@ -243,10 +271,9 @@ function StaySummary({
   };
   stay: StayQuery;
   detailHref: string;
+  total: number;
 }) {
-  const nightly = Number(room.roomType.basePrice);
   const nights = nightsBetween(stay.checkin, stay.checkout);
-  const total = nights * (Number.isFinite(nightly) ? nightly : 0);
 
   return (
     <aside className="order-1 space-y-4 rounded-2xl border border-border/80 bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-24 lg:order-2">
@@ -277,15 +304,20 @@ function StaySummary({
         </div>
         <div className="flex items-center justify-between gap-4">
           <dt className="text-muted-foreground">
-            {formatMoney(nightly)} × {nights} {nights === 1 ? "noche" : "noches"}
+            {formatMoney(room.roomType.basePrice)} × {nights}{" "}
+            {nights === 1 ? "noche" : "noches"}
           </dt>
           <dd className="font-medium text-foreground">{formatMoney(total)}</dd>
         </div>
         <div className="flex items-center justify-between gap-4 text-base">
-          <dt className="font-semibold text-foreground">Total</dt>
+          <dt className="font-semibold text-foreground">Total estimado</dt>
           <dd className="font-semibold text-foreground">{formatMoney(total)}</dd>
         </div>
       </dl>
+
+      <p className="text-xs text-muted-foreground">
+        El equipo confirmará el importe final al revisar la solicitud.
+      </p>
 
       <Button variant="outline" asChild className="w-full">
         <Link href={detailHref}>Cambiar fechas</Link>

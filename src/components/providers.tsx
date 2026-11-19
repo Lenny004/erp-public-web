@@ -1,10 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
 
 import { makeQueryClient } from "@/lib/query-client";
+
+/** El sistema de avisos no debe bloquear el primer render de páginas públicas. */
+const Toaster = dynamic(() => import("sonner").then((module) => module.Toaster), {
+  ssr: false,
+});
 
 /**
  * Proveedores globales del sitio público: React Query y notificaciones Sonner.

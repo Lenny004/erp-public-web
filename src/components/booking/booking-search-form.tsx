@@ -272,7 +272,9 @@ export function BookingSearchForm({
             onChange={(next) => {
               setCheckin(next);
               if (checkout && next >= checkout) {
-                setCheckout(format(addDays(parseISO(next), 1), "yyyy-MM-dd"));
+                // No cambiar silenciosamente la salida al día siguiente: el usuario
+                // debe elegir explícitamente una fecha posterior al check-in.
+                setCheckout("");
               }
             }}
           />

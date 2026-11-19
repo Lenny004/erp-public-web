@@ -10,16 +10,18 @@
 ## 📑 Contenido
 
 - [Aspectos destacados](#-aspectos-destacados)
-- [Descripción](#️-descripción)
+- [Descripción](#%E2%84%B9%EF%B8%8F-descripción)
+- [Capturas](#%EF%B8%8F-capturas)
 - [Requisitos](#-requisitos)
-- [Instalación](#️-instalación)
+- [Instalación](#%EF%B8%8F-instalación)
 - [Uso](#-uso)
-- [Configuración](#️-configuración)
-- [Estructura del proyecto](#️-estructura-del-proyecto)
-- [Desarrollo](#️-desarrollo)
+- [Configuración](#%EF%B8%8F-configuración)
+- [Estructura del proyecto](#%EF%B8%8F-estructura-del-proyecto)
+- [Desarrollo](#%EF%B8%8F-desarrollo)
 - [Pruebas](#-pruebas)
-- [Hoja de ruta y estado](#️-hoja-de-ruta-y-estado)
+- [Hoja de ruta y estado](#%EF%B8%8F-hoja-de-ruta-y-estado)
 - [Soporte y contribuciones](#-soporte-y-contribuciones)
+- [Autores y agradecimientos](#%EF%B8%8F-autores-y-agradecimientos)
 - [Licencia](#-licencia)
 
 <!-- section:highlights -->
@@ -58,6 +60,13 @@ erp-public-web (3002)    API pública de reservas (sin login)
 | **erp-public-web** (este) | Catálogo, wizard de reserva y contacto. |
 
 **Stack:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, TanStack Query, Zod, Sonner, Lucide React, pnpm 11.
+
+<!-- section:visuals -->
+## 🖼️ Capturas
+
+![Imagen principal del sitio público](public/images/hero.webp)
+
+![Imagen de ejemplo de una habitación](public/images/room-placeholder-1.webp)
 
 <!-- section:requirements -->
 ## 📋 Requisitos
@@ -207,6 +216,11 @@ No hay suite de pruebas unitarias en este repositorio; la verificación local ha
 ```bash
 git config core.hooksPath .githooks
 ```
+
+<!-- section:authors -->
+## ✍️ Autores y agradecimientos
+
+- ERP System contributors — equipo del proyecto, según `LICENSE`.
 
 <!-- section:license -->
 ## 📄 Licencia

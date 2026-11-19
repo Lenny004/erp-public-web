@@ -76,7 +76,7 @@ export interface PublicCompanyProfile {
   logoUrl: string | null;
 }
 
-/** Reserva creada (estado inicial `PENDIENTE`, origen `EN_LINEA`). */
+/** Confirmación pública de reserva; omite IDs internos de organización y huésped. */
 export interface CreateReservationResponse {
   id: string;
   status: string;
@@ -88,8 +88,6 @@ export interface CreateReservationResponse {
   guestCount?: number;
   notes: string | null;
   total: string | number;
-  roomId?: string;
-  organizationId?: string;
   guestDoc?: string;
   createdAt?: string;
   updatedAt?: string;

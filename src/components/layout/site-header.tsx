@@ -4,18 +4,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { publicApi } from "@/lib/api/public";
+import { usePublicCompanyProfile } from "@/hooks/use-public-company-profile";
 
 /** Umbral de desplazamiento antes de volver sólido el header de la portada. */
 const SCROLL_SOLID_THRESHOLD = 24;
 
 /** Altura compartida del header; mantiene sincronizado el espacio reservado. */
 const HEADER_HEIGHT_CLASS = "h-[72px]";
+
+/** Controles que pueden recibir foco dentro del panel móvil. */
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 /**
  * Enlaces de navegación principal; el CTA «Reservar» vive en el grupo de acciones.
@@ -40,13 +44,17 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [brandName, setBrandName] = useState(siteConfig.brandName);
+  const { data: company } = usePublicCompanyProfile();
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const wasOpenRef = useRef(false);
 
   useEffect(() => {
     // El perfil público puede reemplazar la marca de fallback definida en build.
-    publicApi.getCompanyProfile().then((company) => {
-      if (company?.commercialName || company?.legalName) setBrandName(company.commercialName || company.legalName);
-    }).catch(() => undefined);
-  }, []);
+    if (company?.commercialName || company?.legalName) {
+      setBrandName(company.commercialName || company.legalName || siteConfig.brandName);
+    }
+  }, [company]);
 
   /** Indica que el header flota sobre el hero sin fondo sólido. */
   const isTransparent = isHome && !scrolled;
@@ -76,11 +84,71 @@ export function SiteHeader() {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Un drawer móvil abierto deja de ser válido al entrar al breakpoint de escritorio.
+  useEffect(() => {
+    const desktopViewport = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) setMobileOpen(false);
+    };
+
+    desktopViewport.addEventListener("change", closeOnDesktop);
+    return () => desktopViewport.removeEventListener("change", closeOnDesktop);
+  }, []);
+
   // Evita el scroll del fondo mientras el panel móvil está abierto.
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = mobileOpen ? "hidden" : previousOverflow;
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  // Panel abierto: foco al primer control, Esc cierra y Tab/Shift+Tab quedan dentro del panel.
+  // Al cerrarse (Esc, X, fondo o navegación) el foco vuelve al botón "Abrir menú".
+  useEffect(() => {
+    if (!mobileOpen) {
+      if (wasOpenRef.current) {
+        wasOpenRef.current = false;
+        if (!window.matchMedia("(min-width: 768px)").matches) {
+          triggerRef.current?.focus();
+        }
+      }
+      return;
+    }
+    wasOpenRef.current = true;
+
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMobileOpen(false);
+        return;
+      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const nodes = Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (nodes.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const inside = panelRef.current.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || !inside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !inside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKey);
+    const raf = requestAnimationFrame(() => {
+      panelRef.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener("keydown", handleKey);
     };
   }, [mobileOpen]);
 
@@ -153,6 +221,7 @@ export function SiteHeader() {
 
             {/* Activador del menú móvil con forma de píldora. */}
             <Button
+              ref={triggerRef}
               type="button"
               variant="outline"
               size="sm"
@@ -193,6 +262,7 @@ export function SiteHeader() {
           mobileOpen ? "pointer-events-auto" : "pointer-events-none",
         )}
         aria-hidden={!mobileOpen}
+        inert={!mobileOpen}
       >
         {/* Fondo que permite cerrar el panel. */}
         <button
@@ -201,13 +271,14 @@ export function SiteHeader() {
             "absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300",
             mobileOpen ? "opacity-100" : "opacity-0",
           )}
-          aria-label="Cerrar menú"
-          tabIndex={mobileOpen ? 0 : -1}
+          tabIndex={-1}
+          aria-hidden
           onClick={() => setMobileOpen(false)}
         />
 
         {/* Panel que entra desde la derecha. */}
         <div
+          ref={panelRef}
           className={cn(
             "absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-card shadow-2xl transition-transform duration-300 ease-out",
             mobileOpen ? "translate-x-0" : "translate-x-full",

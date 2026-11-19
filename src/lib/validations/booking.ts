@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { personNameSchema } from "@/lib/validations/person-name";
 
 // ---------------------------------------------------------------------------
 // Esquemas compartidos de fechas
@@ -59,18 +60,19 @@ export type AvailabilitySearchValues = z.infer<typeof availabilitySearchSchema>;
  */
 export const reservationFormSchema = z
   .object({
-    guestName: z
-      .string()
-      .min(2, "El nombre debe tener al menos 2 caracteres")
-      .max(120, "El nombre es demasiado largo"),
+    guestName: personNameSchema("Nombre", 2, 200),
     email: z
       .string()
       .min(1, "El correo es obligatorio")
-      .email("Ingresa un correo electrónico válido"),
+      .email("Ingresa un correo electrónico válido")
+      .max(100, "Máximo 100 caracteres"),
     phone: z
       .string()
-      .min(7, "El teléfono debe tener al menos 7 dígitos")
-      .max(30, "El teléfono es demasiado largo"),
+      .max(30, "El teléfono es demasiado largo")
+      .refine(
+        (value) => /^[+()\d\s-]+$/.test(value) && (value.match(/\d/g)?.length ?? 0) >= 7,
+        "El teléfono debe tener al menos 7 dígitos",
+      ),
     notes: z
       .string()
       .max(500, "Las notas no pueden superar 500 caracteres")

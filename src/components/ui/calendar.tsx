@@ -21,7 +21,7 @@ function Calendar({
   ...props
 }: CalendarProps) {
   return (
-    <div className="day-picker-scope">
+    <div className="day-picker">
       <DayPicker
         showOutsideDays={showOutsideDays}
         locale={es}

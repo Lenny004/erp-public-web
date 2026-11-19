@@ -8,7 +8,13 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
 import type { AvailabilitySearchValues } from "@/lib/validations/booking";
-import { formatDate, formatMoney, nightsBetween } from "@/lib/format";
+import {
+  calculateStayTotal,
+  formatDate,
+  formatMoney,
+  nightsBetween,
+  parseMoneyAmount,
+} from "@/lib/format";
 import { roomDetailHref, roomGuestHref } from "@/lib/booking-paths";
 import { usePublicRooms } from "@/hooks/use-public-rooms";
 import { useAvailability } from "@/hooks/use-availability";
@@ -120,9 +126,9 @@ export function HabitacionContent() {
     );
   }
 
-  const nightly = Number(room.roomType.basePrice);
+  const nightly = parseMoneyAmount(room.roomType.basePrice);
   const nights = search ? nightsBetween(search.checkin, search.checkout) : 0;
-  const total = nights * (Number.isFinite(nightly) ? nightly : 0);
+  const total = calculateStayTotal(room.roomType.basePrice, nights);
   const otherRoomsHref = search
     ? `/reservar?checkin=${search.checkin}&checkout=${search.checkout}&guests=${search.guests}`
     : "/reservar";
@@ -159,9 +165,11 @@ export function HabitacionContent() {
         <aside className="space-y-4 rounded-2xl border border-border/80 bg-card p-5 shadow-sm lg:sticky lg:top-24 sm:p-6">
           <p>
             <span className="text-2xl font-semibold text-foreground">
-              {formatMoney(room.roomType.basePrice)}
+              {nightly === null ? "Precio no disponible" : formatMoney(nightly)}
             </span>
-            <span className="text-sm text-muted-foreground"> / noche</span>
+            {nightly !== null && (
+              <span className="text-sm text-muted-foreground"> / noche</span>
+            )}
           </p>
 
           <BookingSearchForm
@@ -201,26 +209,40 @@ export function HabitacionContent() {
               <p className="text-sm text-foreground" role="status">
                 Libre del {formatDate(search.checkin)} al {formatDate(search.checkout)}.
               </p>
-              <dl className="space-y-2 border-t border-border/70 pt-4 text-sm">
-                <div className="flex items-center justify-between gap-4">
-                  <dt className="text-muted-foreground">
-                    {formatMoney(nightly)} × {nights}{" "}
-                    {nights === 1 ? "noche" : "noches"}
-                  </dt>
-                  <dd className="font-medium text-foreground">{formatMoney(total)}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-4 text-base">
-                  <dt className="font-semibold text-foreground">Total</dt>
-                  <dd className="font-semibold text-foreground">{formatMoney(total)}</dd>
-                </div>
-              </dl>
+              {total === null || nightly === null ? (
+                <p className="text-sm text-muted-foreground" role="status">
+                  No podemos mostrar el total de esta estadía. Inténtalo más tarde.
+                </p>
+              ) : (
+                <>
+                  <dl className="space-y-2 border-t border-border/70 pt-4 text-sm">
+                    <div className="flex items-center justify-between gap-4">
+                      <dt className="text-muted-foreground">
+                        {formatMoney(nightly)} × {nights}{" "}
+                        {nights === 1 ? "noche" : "noches"}
+                      </dt>
+                      <dd className="font-medium text-foreground">
+                        {formatMoney(total)}
+                      </dd>
+                    </div>
+                    <div className="flex items-center justify-between gap-4 text-base">
+                      <dt className="font-semibold text-foreground">
+                        Total estimado
+                      </dt>
+                      <dd className="font-semibold text-foreground">
+                        {formatMoney(total)}
+                      </dd>
+                    </div>
+                  </dl>
 
-              <Button asChild size="lg" className="h-12 w-full">
-                <Link href={guestHref}>Continuar</Link>
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                En el siguiente paso completas tus datos para enviar la solicitud.
-              </p>
+                  <Button asChild size="lg" className="h-12 w-full">
+                    <Link href={guestHref}>Continuar</Link>
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    El equipo confirmará el importe final al revisar la solicitud.
+                  </p>
+                </>
+              )}
             </div>
           )}
         </aside>

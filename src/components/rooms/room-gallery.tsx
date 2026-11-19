@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 import type { PublicRoomImage } from "@/lib/api/public";
 import { resolveMediaUrl } from "@/lib/format";
@@ -44,10 +45,14 @@ export function RoomGallery({ images, alt, seed }: RoomGalleryProps) {
           Las fotos del catálogo pueden venir de cualquier host. next/image
           lanza si el dominio no está en remotePatterns y deja la página en blanco.
         */}
-        <img
+        <Image
           src={current.src}
           alt={current.alt}
-          className="absolute inset-0 size-full object-cover"
+          fill
+          unoptimized
+          priority={index === 0}
+          sizes="(max-width: 768px) 100vw, 60vw"
+          className="object-cover"
         />
       </div>
 
@@ -65,10 +70,14 @@ export function RoomGallery({ images, alt, seed }: RoomGalleryProps) {
                 photoIndex === index && "ring-2 ring-primary",
               )}
             >
-              <img
+              <Image
                 src={photo.src}
                 alt=""
-                className="absolute inset-0 size-full object-cover"
+                fill
+                unoptimized
+                loading="lazy"
+                sizes="(max-width: 640px) 25vw, 20vw"
+                className="object-cover"
               />
             </button>
           ))}

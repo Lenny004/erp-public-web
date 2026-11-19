@@ -5,9 +5,30 @@
  * Todos los valores pueden sobreescribirse con variables `NEXT_PUBLIC_*`.
  */
 
-/** Imagen hero por defecto: lobby de hotel en Unsplash (alta calidad, libre de uso). */
-const DEFAULT_HERO_IMAGE_URL =
-  "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=80&auto=format&fit=crop";
+/** Imagen hero por defecto local para que el LCP no dependa de un CDN externo. */
+const DEFAULT_HERO_IMAGE_URL = "/images/hero.webp";
+
+function requiredPublicText(name: string, value: string | undefined): string {
+  const normalized = value?.trim();
+  if (!normalized) throw new Error(`${name} es obligatoria para el sitio público.`);
+  return normalized;
+}
+
+function requiredPublicEmail(name: string, value: string | undefined): string {
+  const normalized = value?.trim().toLowerCase();
+  if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+    throw new Error(`${name} debe ser un correo electrónico válido.`);
+  }
+  return normalized;
+}
+
+function requiredPublicPhone(name: string, value: string | undefined): string {
+  const normalized = value?.trim();
+  if (!normalized || !/^\+?[\d\s().-]{7,20}$/.test(normalized)) {
+    throw new Error(`${name} debe ser un teléfono válido.`);
+  }
+  return normalized;
+}
 
 /**
  * Configuración estática del sitio, leída una vez desde el entorno de build.
@@ -21,17 +42,22 @@ export const siteConfig = {
   tagline: process.env.NEXT_PUBLIC_BRAND_TAGLINE?.trim() || "Reserva tu estadía",
 
   /** Correo de contacto / reservas. */
-  contactEmail:
-    process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "reservas@hotel.com",
+  contactEmail: requiredPublicEmail(
+    "NEXT_PUBLIC_CONTACT_EMAIL",
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL,
+  ),
 
   /** Teléfono con formato local El Salvador. */
-  contactPhone:
-    process.env.NEXT_PUBLIC_CONTACT_PHONE?.trim() || "+503 2222-0000",
+  contactPhone: requiredPublicPhone(
+    "NEXT_PUBLIC_CONTACT_PHONE",
+    process.env.NEXT_PUBLIC_CONTACT_PHONE,
+  ),
 
   /** Dirección física o ciudad de referencia. */
-  contactAddress:
-    process.env.NEXT_PUBLIC_CONTACT_ADDRESS?.trim() ||
-    "Colonia Escalón, San Salvador, El Salvador",
+  contactAddress: requiredPublicText(
+    "NEXT_PUBLIC_CONTACT_ADDRESS",
+    process.env.NEXT_PUBLIC_CONTACT_ADDRESS,
+  ),
 
   /** URL de la imagen principal del hero de la página de inicio. */
   heroImageUrl:

@@ -4,8 +4,7 @@
 
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
-import { publicApi } from "@/lib/api/public";
-import { useEffect, useState } from "react";
+import { usePublicCompanyProfile } from "@/hooks/use-public-company-profile";
 
 /** Enlaces de exploración del marketplace de hospitalidad. */
 const EXPLORE_LINKS = [
@@ -29,11 +28,13 @@ const linkClassName =
  */
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  const [company, setCompany] = useState<{ name: string; address: string; phone: string; email: string }>({ name: siteConfig.brandName, address: siteConfig.contactAddress, phone: siteConfig.contactPhone, email: siteConfig.contactEmail });
-
-  useEffect(() => {
-    publicApi.getCompanyProfile().then((data) => { if (data) setCompany({ name: data.commercialName?.trim() || data.legalName?.trim() || siteConfig.brandName, address: data.address || siteConfig.contactAddress, phone: data.phone || siteConfig.contactPhone, email: data.email || siteConfig.contactEmail }); }).catch(() => undefined);
-  }, []);
+  const { data } = usePublicCompanyProfile();
+  const company = {
+    name: data?.commercialName?.trim() || data?.legalName?.trim() || siteConfig.brandName,
+    address: data?.address || siteConfig.contactAddress,
+    phone: data?.phone || siteConfig.contactPhone,
+    email: data?.email || siteConfig.contactEmail,
+  };
 
   return (
     <footer className="border-t border-border/40 bg-card">

@@ -8,6 +8,10 @@ import {
 } from "@/lib/validations/reservation";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { separarNombreCompleto, unirNombre } from "@/lib/nombres";
+import {
+  optionalPersonNameSchema,
+  personNameSchema,
+} from "@/lib/validations/person-name";
 import { Button } from "@/components/ui/button";
 import { Field, messageId } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -32,19 +36,26 @@ interface GuestFormState {
   notes: string;
 }
 
-type Campo = keyof GuestFormState;
+type FieldName = keyof GuestFormState;
 
 /** Esquema de la UI; al pasar, se valida además contra `guestDetailsSchema` (contrato del API). */
 const guestFormSchema = z.object({
-  firstNames: z.string().trim().min(2, "Ingresa tu nombre").max(100, "Nombre demasiado largo"),
-  paternalSurname: z.string().trim().min(2, "Ingresa tu apellido paterno").max(50, "Apellido demasiado largo"),
-  maternalSurname: z.string().trim().max(50, "Apellido demasiado largo"),
-  email: z.string().email("Ingresa un correo como nombre@dominio.com"),
-  phone: z.string().min(7, "Ingresa un teléfono de al menos 7 dígitos").max(30, "Teléfono demasiado largo"),
+  firstNames: personNameSchema("Nombre", 2, 100),
+  paternalSurname: personNameSchema("Apellido paterno", 2, 50),
+  maternalSurname: optionalPersonNameSchema("Apellido materno", 48),
+  email: z.string().email("Ingresa un correo como nombre@dominio.com").max(100, "Máximo 100 caracteres"),
+  phone: z
+    .string()
+    .trim()
+    .max(30, "Teléfono demasiado largo")
+    .refine(
+      (value) => /^[+()\d\s-]+$/.test(value) && (value.match(/\d/g)?.length ?? 0) >= 7,
+      "Ingresa un teléfono válido de al menos 7 dígitos",
+    ),
   notes: z.string().max(1000, "Máximo 1000 caracteres"),
 });
 
-const IDS: Record<Campo, string> = {
+const FIELD_IDS: Record<FieldName, string> = {
   firstNames: "guestFirstNames",
   paternalSurname: "guestPaternalSurname",
   maternalSurname: "guestMaternalSurname",
@@ -73,42 +84,50 @@ export function ReservationForm({
       notes: defaultValues?.notes ?? "",
     };
   });
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const getValues = useCallback(() => values, [values]);
-  const { errors, validarCampo, alCambiar, validarTodo } = useFormValidation<Campo, z.infer<typeof guestFormSchema>>(
+  const { errors, validarCampo, alCambiar, validarTodo } = useFormValidation<FieldName, z.infer<typeof guestFormSchema>>(
     guestFormSchema,
     getValues,
   );
 
-  function updateField(key: Campo, value: string) {
-    const next = { ...values, [key]: value };
+  function updateField(fieldName: FieldName, value: string) {
+    const next = { ...values, [fieldName]: value };
     setValues(next);
-    alCambiar(key, next);
+    setSubmitError(null);
+    alCambiar(fieldName, next);
   }
 
   /** Props comunes de accesibilidad y validación por campo. */
-  const control = (campo: Campo) => ({
-    id: IDS[campo],
-    value: values[campo],
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateField(campo, e.target.value),
-    onBlur: () => validarCampo(campo),
-    "aria-invalid": Boolean(errors[campo]),
-    "aria-describedby": messageId(IDS[campo]),
+  const control = (fieldName: FieldName) => ({
+    id: FIELD_IDS[fieldName],
+    value: values[fieldName],
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => updateField(fieldName, e.target.value),
+    onBlur: () => validarCampo(fieldName),
+    "aria-invalid": Boolean(errors[fieldName]),
+    "aria-describedby": messageId(FIELD_IDS[fieldName]),
   });
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (isSubmitting) return;
 
-    const ui = validarTodo(IDS);
-    if (!ui) return;
+    setSubmitError(null);
+
+    const formValues = validarTodo(FIELD_IDS);
+    if (!formValues) return;
 
     const parsed = guestDetailsSchema.safeParse({
-      guestName: unirNombre(ui.firstNames, ui.paternalSurname, ui.maternalSurname),
-      email: ui.email,
-      phone: ui.phone,
-      notes: ui.notes || undefined,
+      guestName: unirNombre(formValues.firstNames, formValues.paternalSurname, formValues.maternalSurname),
+      email: formValues.email,
+      phone: formValues.phone,
+      notes: formValues.notes || undefined,
     });
-    if (!parsed.success) return;
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message;
+      setSubmitError(typeof message === "string" ? message : "Revisa los datos ingresados.");
+      return;
+    }
 
     await onSubmit(parsed.data);
   }
@@ -128,15 +147,15 @@ export function ReservationForm({
           <p className="text-sm text-muted-foreground">Tal como aparece en tu identificación.</p>
         </header>
 
-        <Field id={IDS.firstNames} label="Nombres" required error={errors.firstNames}>
+        <Field id={FIELD_IDS.firstNames} label="Nombres" required error={errors.firstNames}>
           <Input {...control("firstNames")} autoComplete="given-name" placeholder="Ej. Ana María" maxLength={100} aria-required />
         </Field>
 
         <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-          <Field id={IDS.paternalSurname} label="Apellido paterno" required error={errors.paternalSurname}>
+          <Field id={FIELD_IDS.paternalSurname} label="Apellido paterno" required error={errors.paternalSurname}>
             <Input {...control("paternalSurname")} autoComplete="family-name" placeholder="Ej. López" maxLength={50} aria-required />
           </Field>
-          <Field id={IDS.maternalSurname} label="Apellido materno" optional error={errors.maternalSurname}>
+          <Field id={FIELD_IDS.maternalSurname} label="Apellido materno" optional error={errors.maternalSurname}>
             <Input {...control("maternalSurname")} autoComplete="additional-name" placeholder="Ej. Martínez" maxLength={50} />
           </Field>
         </div>
@@ -151,10 +170,10 @@ export function ReservationForm({
         </header>
 
         <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-          <Field id={IDS.email} label="Correo electrónico" required error={errors.email}>
+          <Field id={FIELD_IDS.email} label="Correo electrónico" required error={errors.email}>
             <Input {...control("email")} type="email" inputMode="email" autoComplete="email" placeholder="nombre@dominio.com" aria-required />
           </Field>
-          <Field id={IDS.phone} label="Teléfono" required error={errors.phone}>
+          <Field id={FIELD_IDS.phone} label="Teléfono" required error={errors.phone}>
             <Input {...control("phone")} type="tel" inputMode="tel" autoComplete="tel" placeholder="0000-0000" maxLength={30} aria-required />
           </Field>
         </div>
@@ -162,7 +181,7 @@ export function ReservationForm({
 
       {/* Sección: notas opcionales */}
       <div className="space-y-4 px-6 py-8 sm:px-8">
-        <Field id={IDS.notes} label="Notas adicionales" optional error={errors.notes} hint="Máximo 1000 caracteres.">
+        <Field id={FIELD_IDS.notes} label="Notas adicionales" optional error={errors.notes} hint="Máximo 1000 caracteres.">
           <Textarea
             {...control("notes")}
             placeholder="Llegada tarde, cama extra, alergias, etc."
@@ -175,6 +194,11 @@ export function ReservationForm({
 
       {/* CTA de confirmación — separado visualmente del formulario */}
       <div className="border-t border-border/60 bg-muted/15 px-6 py-6 sm:px-8">
+        {submitError && (
+          <p className="mb-3 text-sm text-destructive" role="alert">
+            {submitError}
+          </p>
+        )}
         <Button
           type="submit"
           size="lg"

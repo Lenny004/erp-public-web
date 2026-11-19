@@ -36,8 +36,9 @@ export class ApiError extends Error {
 // Tipos internos de respuesta
 // ---------------------------------------------------------------------------
 
-/** Envoltorio estándar de éxito en rutas públicas: `{ data: T }`. */
+/** Envelope actual; `success` es opcional para seguir aceptando respuestas antiguas. */
 interface ApiSuccessWrapper<T> {
+  success?: true;
   data: T;
 }
 
@@ -55,7 +56,8 @@ interface ApiErrorBody {
 
 /**
  * Cliente fetch mínimo para endpoints públicos de `erp-core-api`.
- * Parsea JSON, desenvuelve `{ data }` en éxito y lanza `ApiError` si `!ok`.
+ * Parsea JSON, desenvuelve `{ success: true, data }` y también acepta `{ data }` antiguo.
+ * Lanza `ApiError` si `!ok`.
  */
 export class PublicApiClient {
   constructor(private readonly baseUrl: string = getApiBaseUrl()) {}
@@ -91,7 +93,7 @@ export class PublicApiClient {
       );
     }
 
-    // Las rutas públicas responden con `{ data: … }`.
+    // La versión actual incluye success; se conserva compatibilidad con `{ data }`.
     if (body && typeof body === "object" && "data" in body) {
       return (body as ApiSuccessWrapper<T>).data;
     }

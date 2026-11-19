@@ -96,9 +96,38 @@
   --sidebar-active-foreground: var(--primary);
   --sidebar-border: color-mix(in oklch, var(--primary-foreground) 22%, var(--primary));
   --sidebar-ring: var(--accent);
+  /* Tokens de sistema compartidos por los bloques BEM. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --text-xs: 0.75rem;
+  --leading-tight: 1.25;
+  --border-width: 1px;
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.06), 0 4px 16px oklch(0% 0 0 / 0.08);
+  --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.06), 0 8px 24px oklch(0% 0 0 / 0.12);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-modal: 30;
+  --z-toast: 40;
+  --control-height: 2.75rem;
+  --focus-ring: color-mix(in oklch, var(--ring) 35%, transparent);
+  --overlay: oklch(0% 0 0 / 0.5);
+  --skeleton-base: var(--muted);
+  --skeleton-highlight: color-mix(in oklch, var(--muted) 55%, var(--card));
+  --hero-scrim-start: oklch(0% 0 0 / 0);
+  --hero-scrim-mid: oklch(0% 0 0 / 0.06);
+  --hero-scrim-deep: oklch(0% 0 0 / 0.38);
+  --hero-scrim-end: oklch(0% 0 0 / 0.62);
 }
 
-/* Dark variant — optional, warm neutrals (not default) */
 .dark {
   --background: oklch(15.20% 0.020 253.73);
   --foreground: oklch(94% 0.018 254.92);
@@ -139,40 +168,14 @@
   --sidebar-active-foreground: var(--foreground);
   --sidebar-border: oklch(100% 0 0 / 12%);
   --sidebar-ring: var(--accent);
-}
-
-/* Tokens de sistema (skill ui-ux-componentes): espaciado, sombras, movimiento, capas y controles. */
-:root {
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-7: 3rem;
-  --space-8: 4rem;
-  --border-width: 1px;
-  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.06), 0 4px 16px oklch(0% 0 0 / 0.08);
-  --shadow-md: 0 2px 4px oklch(0% 0 0 / 0.06), 0 8px 24px oklch(0% 0 0 / 0.12);
-  --duration-fast: 120ms;
-  --duration-base: 200ms;
-  --ease: cubic-bezier(0.2, 0, 0, 1);
-  --z-dropdown: 10;
-  --z-sticky: 20;
-  --z-modal: 30;
-  --z-toast: 40;
-  --control-height: 2.75rem;
-  --focus-ring: color-mix(in oklch, var(--ring) 35%, transparent);
-  --overlay: oklch(0% 0 0 / 0.5);
-  --skeleton-base: var(--muted);
-  --skeleton-highlight: color-mix(in oklch, var(--muted) 55%, var(--card));
-}
-
-.dark {
   --shadow-sm: 0 0 0 1px var(--border);
   --shadow-md: 0 0 0 1px var(--border), 0 8px 24px oklch(0% 0 0 / 0.4);
   --overlay: oklch(0% 0 0 / 0.65);
   --skeleton-highlight: color-mix(in oklch, var(--muted) 70%, var(--foreground));
+  --hero-scrim-start: oklch(0% 0 0 / 0);
+  --hero-scrim-mid: oklch(0% 0 0 / 0.08);
+  --hero-scrim-deep: oklch(0% 0 0 / 0.44);
+  --hero-scrim-end: oklch(0% 0 0 / 0.7);
 }
 
 @layer base {
@@ -204,6 +207,20 @@
 }
 
 @layer components {
+  .room-image-carousel__control {
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    .room-image-carousel__control {
+      opacity: 0;
+    }
+
+    .room-image-carousel:hover .room-image-carousel__control {
+      opacity: 1;
+    }
+  }
+
   @keyframes public-motion-page-enter {
     from {
       opacity: 0;
@@ -228,8 +245,9 @@
     }
   }
 
+  /* Las rutas pintan su contenido inmediatamente; la animación global retrasaba el LCP. */
   .public-motion__page {
-    animation: public-motion-page-enter 450ms ease-out both;
+    animation: none;
   }
 
   .public-motion__reveal,
@@ -262,11 +280,11 @@
     isolation: isolate;
   }
 
-  .public-home__hero > img {
+  .public-home__image {
     z-index: 0;
   }
 
-  .public-home__hero > .hero-scrim {
+  .public-home__scrim {
     z-index: 0;
   }
 
@@ -287,7 +305,7 @@
   }
 
   /* PNG teñido con tokens del tema: máscara + --icon-fill. URL vía --icon-src en el elemento. */
-  .icon-mask {
+  .icon {
     display: inline-block;
     flex-shrink: 0;
     background-color: var(--icon-fill, var(--primary));
@@ -295,37 +313,33 @@
     mask-size: contain;
     mask-position: center;
     mask-repeat: no-repeat;
-    -webkit-mask-image: var(--icon-src);
-    -webkit-mask-size: contain;
-    -webkit-mask-position: center;
-    -webkit-mask-repeat: no-repeat;
   }
 
-  .icon-primary {
+  .icon--primary {
     --icon-fill: var(--primary);
   }
 
-  .icon-secondary {
+  .icon--secondary {
     --icon-fill: var(--secondary);
   }
 
-  .icon-muted {
+  .icon--muted {
     --icon-fill: var(--muted-foreground);
   }
 
-  .icon-destructive {
+  .icon--destructive {
     --icon-fill: var(--destructive);
   }
 
-  .icon-accent {
+  .icon--accent {
     --icon-fill: var(--accent);
   }
 
-  .icon-white {
+  .icon--light {
     --icon-fill: var(--card);
   }
 
-  .icon-black {
+  .icon--dark {
     --icon-fill: var(--foreground);
   }
 
@@ -374,8 +388,8 @@
 
   .field__message {
     min-height: 1.25rem;
-    font-size: 0.75rem;
-    line-height: 1.25rem;
+    font-size: var(--text-xs);
+    line-height: var(--leading-tight);
     color: var(--muted-foreground);
   }
 
@@ -394,7 +408,7 @@
   }
 
   /* react-day-picker (importado en calendar.tsx): alinear acento con tokens del tema */
-  .day-picker-scope .rdp-root {
+  .day-picker .rdp-root {
     --rdp-accent-color: var(--primary);
     --rdp-accent-background-color: color-mix(in oklch, var(--primary) 16%, var(--background));
     --rdp-day_button-border-radius: var(--radius-md);
@@ -408,13 +422,13 @@
    * Degradado cinematográfico suave sobre imágenes hero — bottom fade, no blue wash.
    * Aplicar en un pseudo-elemento o capa absoluta sobre la foto de fondo.
    */
-  .hero-scrim {
+  .public-home__scrim {
     background: linear-gradient(
       to bottom,
-      oklch(0% 0 0 / 0) 0%,
-      oklch(0% 0 0 / 0.06) 35%,
-      oklch(0% 0 0 / 0.38) 72%,
-      oklch(0% 0 0 / 0.62) 100%
+      var(--hero-scrim-start) 0%,
+      var(--hero-scrim-mid) 35%,
+      var(--hero-scrim-deep) 72%,
+      var(--hero-scrim-end) 100%
     );
   }
 
@@ -440,17 +454,15 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .skeleton {
-      animation: none;
-    }
-
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
+    .skeleton,
+    :root *,
+    :root *::before,
+    :root *::after {
+      animation-duration: 0.01ms;
+      animation-delay: 0ms;
+      animation-iteration-count: 1;
+      transition-duration: 0.01ms;
+      scroll-behavior: auto;
     }
   }
 }

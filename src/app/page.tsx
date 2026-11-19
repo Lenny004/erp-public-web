@@ -34,21 +34,22 @@ export default function HomePage() {
         Composición única: marca dominante, titular, apoyo, CTAs e imagen full-bleed.
         Sin tarjetas, badges ni overlays sobre la fotografía (solo scrim de legibilidad).
       */}
-      <section className="public-home__hero relative flex min-h-[92svh] w-full flex-col justify-end bg-primary">
+      <section className="public-home__hero relative flex min-h-[80svh] sm:min-h-[92svh] w-full flex-col justify-end bg-primary">
         <Image
           src={siteConfig.heroImageUrl}
           alt=""
           fill
           priority
+          quality={70}
           sizes="100vw"
-          className="object-cover object-center"
+          className="public-home__image object-cover object-center"
         />
         {/* Degradado suave — no es un badge; solo mejora contraste del texto */}
-        <div className="hero-scrim absolute inset-0" aria-hidden />
+        <div className="public-home__scrim absolute inset-0" aria-hidden />
 
-        <div className="public-home__hero-content relative mx-auto w-full max-w-7xl px-5 pb-16 pt-28 sm:px-8 sm:pb-24 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <div className="public-home__hero-content relative mx-auto w-full max-w-7xl px-5 pb-12 pt-24 sm:px-8 sm:pb-24">
           {/* La marca es la señal principal del viewport */}
-          <p className="max-w-4xl font-semibold tracking-tight text-primary-foreground text-5xl sm:text-6xl lg:text-7xl xl:text-8xl">
+          <p className="max-w-4xl font-semibold tracking-tight text-primary-foreground text-4xl sm:text-6xl lg:text-7xl xl:text-8xl">
             {siteConfig.brandName}
           </p>
 
@@ -63,7 +64,7 @@ export default function HomePage() {
           </p>
 
           {/* Un grupo de CTA — primario + secundario */}
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
             <Button
               asChild
               size="lg"
@@ -90,7 +91,7 @@ export default function HomePage() {
       */}
       <section className="public-home__search bg-card py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mb-8 space-y-2 text-center sm:text-left">
+          <div className="mx-auto mb-8 max-w-3xl space-y-2 text-center sm:text-left">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               ¿Cuándo te hospedas?
             </h2>
@@ -99,7 +100,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mx-auto max-w-3xl rounded-2xl border border-border/80 bg-card p-6 shadow-sm sm:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+          <div className="mx-auto max-w-3xl rounded-2xl border border-border/80 bg-card p-4 shadow-sm sm:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
             <BookingSearchForm submitLabel="Buscar disponibilidad" />
           </div>
         </div>

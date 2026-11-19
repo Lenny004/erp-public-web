@@ -20,6 +20,17 @@ function isLoopbackHost(host: string): boolean {
   return host === "localhost" || host === "127.0.0.1" || host === "::1";
 }
 
+function validateApiBaseUrl(value: string): string {
+  try {
+    const url = new URL(value);
+    if (!["http:", "https:"].includes(url.protocol)) throw new Error();
+    if (process.env.NODE_ENV === "production" && url.protocol !== "https:") throw new Error();
+    return url.origin;
+  } catch {
+    throw new Error("NEXT_PUBLIC_API_URL debe ser una URL HTTP(S) válida");
+  }
+}
+
 /**
  * En dev, si abres el sitio por IP de red (ej. 192.168.x.x:3000) pero
  * `NEXT_PUBLIC_API_URL` apunta a localhost, el navegador debe llamar al API
@@ -29,17 +40,13 @@ function isLoopbackHost(host: string): boolean {
  * @returns URL base sin barra final.
  */
 function resolveDevApiBaseUrl(configuredUrl: string): string {
-  try {
-    const apiUrl = new URL(configuredUrl);
-    const pageHost = window.location.hostname;
-    if (isLoopbackHost(apiUrl.hostname) && !isLoopbackHost(pageHost)) {
-      apiUrl.hostname = pageHost;
-      return apiUrl.origin;
-    }
-  } catch {
-    // URL inválida en env: usar valor tal cual.
+  const apiUrl = new URL(validateApiBaseUrl(configuredUrl));
+  const pageHost = window.location.hostname;
+  if (isLoopbackHost(apiUrl.hostname) && !isLoopbackHost(pageHost)) {
+    apiUrl.hostname = pageHost;
+    return apiUrl.origin;
   }
-  return configuredUrl.replace(/\/$/, "");
+  return apiUrl.origin;
 }
 
 /**
@@ -59,9 +66,9 @@ export function getApiBaseUrl(): string {
 
   if (cachedApiBaseUrl == null) {
     if (configuredUrl) {
-      cachedApiBaseUrl = configuredUrl.replace(/\/$/, "");
+      cachedApiBaseUrl = validateApiBaseUrl(configuredUrl);
     } else if (process.env.NODE_ENV !== "production") {
-      cachedApiBaseUrl = LOCAL_API_BASE_URL;
+      cachedApiBaseUrl = validateApiBaseUrl(LOCAL_API_BASE_URL);
     } else {
       throw new Error(
         "Falta NEXT_PUBLIC_API_URL. Define esta variable en tu archivo .env.",
