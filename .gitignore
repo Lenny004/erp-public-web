@@ -52,3 +52,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# e2e / rendimiento (Playwright, Lighthouse CI)
+/e2e-report/
+/test-results/
+/playwright-report/
+/.lighthouseci/

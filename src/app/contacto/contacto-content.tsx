@@ -54,7 +54,7 @@ export function ContactoContent() {
           <ContactDetail icon={Phone} label="Teléfono">
             <a
               href={`tel:${siteConfig.contactPhone.replace(/\s/g, "")}`}
-              className="transition-colors hover:text-primary"
+              className="inline-flex min-h-11 items-center transition-colors hover:text-primary"
             >
               {siteConfig.contactPhone}
             </a>
@@ -63,7 +63,7 @@ export function ContactoContent() {
           <ContactDetail icon={Mail} label="Correo">
             <a
               href={`mailto:${siteConfig.contactEmail}`}
-              className="break-all transition-colors hover:text-primary"
+              className="inline-flex min-h-11 items-center break-all transition-colors hover:text-primary"
             >
               {siteConfig.contactEmail}
             </a>

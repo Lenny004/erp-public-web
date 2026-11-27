@@ -20,7 +20,7 @@ const LEGAL_LINKS = [
 ] as const;
 
 const linkClassName =
-  "text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground";
+  "inline-flex min-h-11 items-center text-sm text-muted-foreground transition-colors duration-200 hover:text-foreground";
 
 /**
  * Pie de página con identidad de marca, navegación secundaria,
@@ -58,7 +58,7 @@ export function SiteFooter() {
             <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
               Explorar
             </p>
-            <nav className="flex flex-col gap-3" aria-label="Explorar el sitio">
+            <nav className="flex flex-col" aria-label="Explorar el sitio">
               {EXPLORE_LINKS.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClassName}>
                   {label}
@@ -97,7 +97,7 @@ export function SiteFooter() {
             <p className="text-xs font-medium uppercase tracking-wider text-foreground/70">
               Legal
             </p>
-            <nav className="flex flex-col gap-3" aria-label="Enlaces legales">
+            <nav className="flex flex-col" aria-label="Enlaces legales">
               {LEGAL_LINKS.map(({ href, label }) => (
                 <Link key={href} href={href} className={linkClassName}>
                   {label}

@@ -10,7 +10,10 @@
     "start": "next start --port 3002",
     "type-check": "tsc --noEmit",
     "lint": "next lint",
-    "clean": "rimraf .next"
+    "clean": "rimraf .next",
+    "e2e": "playwright test -c e2e/playwright.config.ts --grep-invert @perf",
+    "perf": "node e2e/scripts/perf.mjs",
+    "e2e:report": "node e2e/scripts/report.mjs"
   },
   "dependencies": {
     "@react-spring/web": "^10.1.2",
@@ -32,6 +35,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@lhci/cli": "^0.16.1",
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22",
     "@types/react": "^19",
@@ -40,7 +45,8 @@
     "eslint-config-next": "15.5.15",
     "rimraf": "^6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "web-vitals": "^6.2.3"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [

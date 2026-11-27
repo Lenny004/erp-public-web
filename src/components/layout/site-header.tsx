@@ -168,7 +168,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className={cn(
-              "shrink-0 text-xl font-semibold tracking-tight transition-colors sm:text-[1.35rem]",
+              "inline-flex min-h-11 shrink-0 items-center text-xl font-semibold tracking-tight transition-colors sm:text-[1.35rem]",
               isTransparent
                 ? "text-primary-foreground hover:text-primary-foreground/90"
                 : "text-foreground hover:text-foreground/80",
@@ -191,7 +191,7 @@ export function SiteHeader() {
                   key={href}
                   href={href}
                   className={cn(
-                    "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                    "inline-flex min-h-11 items-center rounded-full px-4 text-sm font-medium transition-colors",
                     isTransparent
                       ? isActive
                         ? "bg-primary-foreground/15 text-primary-foreground"
@@ -226,7 +226,7 @@ export function SiteHeader() {
               variant="outline"
               size="sm"
               className={cn(
-                "rounded-full border px-3 md:hidden",
+                "min-h-11 min-w-11 rounded-full border px-3 md:hidden",
                 isTransparent
                   ? "border-primary-foreground/30 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
                   : "border-border/80 bg-card text-foreground shadow-sm hover:bg-muted/40",
