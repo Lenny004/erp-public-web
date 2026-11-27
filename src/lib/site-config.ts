@@ -7,16 +7,23 @@
 
 /** Imagen hero por defecto local para que el LCP no dependa de un CDN externo. */
 const DEFAULT_HERO_IMAGE_URL = "/images/hero.webp";
+const isProduction = process.env.NODE_ENV === "production";
 
 function requiredPublicText(name: string, value: string | undefined): string {
   const normalized = value?.trim();
-  if (!normalized) throw new Error(`${name} es obligatoria para el sitio público.`);
+  if (!normalized) {
+    if (!isProduction && name === "NEXT_PUBLIC_CONTACT_ADDRESS") {
+      return "Dirección configurada por el operador";
+    }
+    throw new Error(`${name} es obligatoria para el sitio público.`);
+  }
   return normalized;
 }
 
 function requiredPublicEmail(name: string, value: string | undefined): string {
   const normalized = value?.trim().toLowerCase();
   if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+    if (!isProduction) return "contact@example.invalid";
     throw new Error(`${name} debe ser un correo electrónico válido.`);
   }
   return normalized;
@@ -25,6 +32,7 @@ function requiredPublicEmail(name: string, value: string | undefined): string {
 function requiredPublicPhone(name: string, value: string | undefined): string {
   const normalized = value?.trim();
   if (!normalized || !/^\+?[\d\s().-]{7,20}$/.test(normalized)) {
+    if (!isProduction) return "0000-0000";
     throw new Error(`${name} debe ser un teléfono válido.`);
   }
   return normalized;
