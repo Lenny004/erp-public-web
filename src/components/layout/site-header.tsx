@@ -156,11 +156,11 @@ export function SiteHeader() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300 ease-out",
+          "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color] duration-300 ease-out",
           HEADER_HEIGHT_CLASS,
           isTransparent
             ? "border-b border-transparent bg-transparent"
-            : "border-b border-border/50 bg-card/85 shadow-sm backdrop-blur-xl supports-[backdrop-filter]:bg-card/75",
+            : "border-b border-border/50 bg-card/95 shadow-sm",
         )}
       >
         <div className="mx-auto flex h-full max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
@@ -268,7 +268,7 @@ export function SiteHeader() {
         <button
           type="button"
           className={cn(
-            "absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300",
+            "absolute inset-0 bg-black/40 transition-opacity duration-300",
             mobileOpen ? "opacity-100" : "opacity-0",
           )}
           tabIndex={-1}
